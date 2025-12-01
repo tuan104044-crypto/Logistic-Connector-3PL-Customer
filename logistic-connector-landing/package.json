@@ -1,0 +1,22 @@
+{
+  "name": "logistic-connector-landing",
+  "version": "1.0.0",
+  "description": "Landing page for Logistic Connector 3PL & Customer",
+  "main": "src/index.html",
+  "scripts": {
+    "start": "live-server src",
+    "build": "echo 'Build process not defined yet.'"
+  },
+  "keywords": [
+    "logistics",
+    "3PL",
+    "landing page",
+    "customer"
+  ],
+  "author": "Your Name",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "live-server": "^1.2.1"
+  }
+}

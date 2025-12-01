@@ -1,0 +1,783 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Đăng ký Nhà cung cấp 3PL</title>
+  <style>
+    :root{--primary:#0b74da;--text:#0b2136;--muted:#6b7280;--border:rgba(15,23,42,0.1);--card:#ffffff;--ok:#10b981;--err:#ef4444;--input-h:48px;--accent:rgba(11,116,218,0.08)}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;background:linear-gradient(135deg,#f0f7ff,#f7fafc 40%,#eef4fb);color:var(--text)}
+    .wrap{max-width:760px;margin:40px auto;padding:20px}
+    .breadcrumb{display:inline-flex;align-items:center;gap:8px;color:#6b7280;text-decoration:none;font-weight:600}
+    .breadcrumb:hover{color:#374151}
+    .breadcrumb svg{width:18px;height:18px}
+    .card{background:var(--card);border:1px solid rgba(15,23,42,0.08);border-radius:16px;box-shadow:0 12px 36px rgba(11,116,218,0.12);padding:28px;max-width:640px;margin:0 auto}
+    h1{margin:0 0 12px;text-align:center;background:linear-gradient(135deg,var(--primary),#0b5cb8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .muted{color:var(--muted);text-align:center}
+    .group{margin-top:18px}
+    .group-title{font-weight:800;margin:0 0 8px;color:var(--primary);display:flex;align-items:center;gap:8px}
+    form{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .field label{display:block;font-weight:600;margin-bottom:6px}
+    .input{position:static}
+    .input-control{position:relative}
+    .input-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+    .input-icon svg{width:18px;height:18px}
+    .field input,.field textarea{width:100%;height:var(--input-h);padding:12px 14px 12px 48px;border-radius:10px;border:1px solid var(--border);font-size:15px;background:#fafcff;transition:all 0.2s;font-family:inherit}
+    .field select{width:100%;height:var(--input-h);padding:12px 14px 12px 48px;border-radius:10px;border:1px solid var(--border);font-size:15px;background:#fafcff;transition:all 0.2s;font-family:inherit;cursor:pointer}
+    .bank-search-wrapper{position:relative}
+    .bank-suggestions{position:absolute;top:100%;left:0;right:0;background:var(--card);border:1px solid var(--border);border-radius:10px;max-height:200px;overflow-y:auto;z-index:100;box-shadow:0 8px 24px rgba(15,23,42,0.15);display:none;margin-top:4px}
+    .bank-suggestions.show{display:block}
+    .bank-suggestion-item{padding:10px 14px;cursor:pointer;font-size:14px;color:var(--text);transition:background 0.2s}
+    .bank-suggestion-item:hover,.bank-suggestion-item.active{background:var(--accent)}
+    .bank-suggestion-item mark{background:rgba(11,116,218,0.2);color:var(--primary);font-weight:600}
+    .field textarea{height:auto;min-height:80px;resize:vertical;padding:12px 14px}
+    .field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(11,116,218,0.12);background:#fff}
+    .hint{font-size:12px;color:#6b7280;margin-top:6px;display:flex;align-items:center;gap:6px}
+    .hint svg{width:16px;height:16px}
+    .error{color:var(--err);font-size:13px;margin-top:4px}
+    .field input.valid{border-color:var(--ok)}
+    .field input.invalid{border-color:var(--err)}
+    .strength{display:flex;align-items:center;gap:10px;margin-top:6px}
+    .strength-bars{display:flex;gap:6px;flex:1}
+    .bar{flex:1;height:6px;border-radius:4px;background:#e5e7eb}
+    .strength.lvl-1 .bar:nth-child(1){background:#f59e0b}
+    .strength.lvl-2 .bar:nth-child(-n+2){background:#10b981}
+    .strength.lvl-3 .bar{background:#0b74da}
+    .services-trigger{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border:1px solid var(--border);border-radius:10px;background:#fafcff;cursor:pointer;transition:all 0.2s;margin-top:6px}
+    .services-trigger:hover{border-color:var(--primary);background:#f0f7ff}
+    .services-trigger-text{font-size:14px;color:var(--muted)}
+    .services-trigger svg{width:20px;height:20px;color:var(--primary)}
+    .services-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .service-tag{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:linear-gradient(135deg,var(--primary),#0b5cb8);color:#fff;border-radius:20px;font-size:13px;font-weight:600;box-shadow:0 2px 8px rgba(11,116,218,0.2)}
+    .service-tag-remove{background:rgba(255,255,255,0.25);border:none;color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;line-height:1;transition:background 0.2s}
+    .service-tag-remove:hover{background:rgba(255,255,255,0.4)}
+    .service-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s}
+    .service-modal-overlay.open{opacity:1;pointer-events:auto}
+    .service-modal{background:var(--card);border-radius:16px;box-shadow:0 20px 60px rgba(15,23,42,0.4);width:90%;max-width:700px;max-height:80vh;overflow-y:auto;padding:24px;position:relative;transform:scale(0.95);transition:transform 0.3s}
+    .service-modal-overlay.open .service-modal{transform:scale(1)}
+    .service-modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid var(--border)}
+    .service-modal-title{font-size:20px;font-weight:800;color:var(--primary)}
+    .service-modal-close{background:transparent;border:none;font-size:28px;line-height:1;color:var(--muted);cursor:pointer;padding:4px}
+    .service-modal-close:hover{color:var(--text)}
+    .service-category{border:1px solid var(--border);border-radius:12px;padding:16px;background:#fafcff;transition:all 0.2s;margin-bottom:12px}
+    .service-category:hover{border-color:var(--primary);background:#f0f7ff}
+    .service-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+    .service-header input[type="checkbox"]{width:20px;height:20px;cursor:pointer;accent-color:var(--primary);margin:0;flex-shrink:0}
+    .service-header label{cursor:pointer;font-size:15px;font-weight:700;color:var(--text);margin:0;user-select:none}
+    .service-details{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding-left:0}
+    .service-detail-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;transition:background 0.2s}
+    .service-detail-item:hover{background:rgba(11,116,218,0.05)}
+    .service-detail-item input[type="checkbox"]{width:16px;height:16px;cursor:pointer;accent-color:var(--primary);margin:0;flex-shrink:0}
+    .service-detail-item label{cursor:pointer;font-size:13px;font-weight:500;color:var(--muted);margin:0;user-select:none;line-height:1.4}
+    .service-modal-footer{margin-top:20px;padding-top:16px;border-top:2px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
+    .btn-secondary{padding:10px 20px;border-radius:10px;border:1px solid var(--border);background:#fff;color:var(--text);font-weight:600;cursor:pointer;transition:all 0.2s}
+    .btn-secondary:hover{background:var(--border)}
+    .upload-area{border:2px dashed var(--border);border-radius:10px;padding:16px;background:#fafcff;transition:all 0.2s}
+    .upload-area:hover{border-color:var(--primary);background:#f0f7ff}
+    .upload-label{display:flex;align-items:center;gap:10px;cursor:pointer;color:var(--text);font-weight:500}
+    .upload-label svg{width:20px;height:20px;color:var(--primary)}
+    .upload-input{display:none}
+    .file-name{font-size:13px;color:var(--muted);margin-top:6px;font-style:italic}
+    .terms{display:flex;align-items:flex-start;gap:10px;margin-top:6px}
+    .actions{margin-top:10px}
+    .btn{padding:12px 16px;border-radius:10px;border:1px solid var(--primary);background:linear-gradient(180deg,#0b84f0,#0b74da);color:#fff;font-weight:700;cursor:pointer;box-shadow:0 8px 24px rgba(11,116,218,0.25);transition:all 0.25s}
+    .btn:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 12px 32px rgba(11,116,218,0.35)}
+    .row-vertical{display:flex;flex-direction:column;gap:12px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="breadcrumb" href="index.html" aria-label="Về Trang chủ">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/><path d="M21 12H9"/></svg>
+      <span>Về Trang chủ</span>
+    </a>
+    <div class="card">
+      <h1>Đăng ký tài khoản nhà cung cấp 3PL</h1>
+      <p class="muted">Điền thông tin bên dưới để hoàn tất đăng ký.</p>
+      <form id="tplSignup">
+        <div class="group">
+          <div class="group-title">Thông tin công ty</div>
+          <div class="field input">
+            <label for="companyName">Tên công ty</label>
+            <div class="input-control">
+              <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h10v10H7z"/></svg></span>
+              <input id="companyName" name="companyName" type="text" placeholder="Tên công ty của bạn" required />
+            </div>
+            <div class="error" id="errCompanyName"></div>
+          </div>
+          <div class="field">
+            <label for="address">Địa chỉ trụ sở</label>
+            <textarea id="address" name="address" placeholder="Số nhà, đường, quận/huyện, tỉnh/thành phố" required></textarea>
+            <div class="error" id="errAddress"></div>
+          </div>
+          <div class="field input">
+            <label for="taxId">Mã số thuế (MST)</label>
+            <div class="input-control">
+              <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3z"/><path d="M7 7h10v4H7z"/></svg></span>
+              <input id="taxId" name="taxId" type="text" placeholder="10–13 chữ số" required />
+            </div>
+            <div class="error" id="errTaxId"></div>
+          </div>
+          <div class="field input">
+            <label for="accountNumber">Số tài khoản</label>
+            <div class="input-control">
+              <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg></span>
+              <input id="accountNumber" name="accountNumber" type="text" placeholder="Số tài khoản ngân hàng" required />
+            </div>
+            <div class="error" id="errAccountNumber"></div>
+          </div>
+          <div class="field input">
+            <label for="bankName">Tên ngân hàng</label>
+            <div class="input-control bank-search-wrapper">
+              <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+              <input id="bankName" name="bankName" type="text" placeholder="Tìm kiếm ngân hàng..." autocomplete="off" required />
+              <input type="hidden" id="bankNameValue" name="bankNameValue" />
+              <div class="bank-suggestions" id="bankSuggestions"></div>
+            </div>
+            <div class="error" id="errBankName"></div>
+          </div>
+          <div class="field input">
+            <label for="accountHolder">Chủ tài khoản</label>
+            <div class="input-control">
+              <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-3-3.87M4 21v-2a4 4 0 013-3.87"/><circle cx="12" cy="7" r="4"/></svg></span>
+              <input id="accountHolder" name="accountHolder" type="text" placeholder="Tên chủ tài khoản" required />
+            </div>
+            <div class="error" id="errAccountHolder"></div>
+          </div>
+        </div>
+        <div class="group">
+          <div class="group-title">Dịch vụ cung cấp</div>
+          <div class="services">
+            <!-- Vận chuyển -->
+            <div class="service-category">
+              <div class="service-header">
+                <input type="checkbox" id="svc1" name="serviceMain" value="Vận chuyển" />
+                <label for="svc1">1. Vận chuyển</label>
+              </div>
+              <div class="service-details">
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc1_1" name="serviceDetail" value="Vận chuyển nội địa (đường bộ)" data-parent="svc1" />
+                  <label for="svc1_1">Vận chuyển nội địa (đường bộ)</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc1_2" name="serviceDetail" value="Vận chuyển quốc tế (Air/Sea)" data-parent="svc1" />
+                  <label for="svc1_2">Vận chuyển quốc tế (Air/Sea)</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc1_3" name="serviceDetail" value="Last-mile delivery" data-parent="svc1" />
+                  <label for="svc1_3">Last-mile delivery</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc1_4" name="serviceDetail" value="Thu hộ – đối soát COD" data-parent="svc1" />
+                  <label for="svc1_4">Thu hộ – đối soát COD</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc1_5" name="serviceDetail" value="Vận chuyển hàng lạnh" data-parent="svc1" />
+                  <label for="svc1_5">Vận chuyển hàng lạnh</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc1_6" name="serviceDetail" value="Vận chuyển hàng cồng kềnh" data-parent="svc1" />
+                  <label for="svc1_6">Vận chuyển hàng cồng kềnh</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc1_7" name="serviceDetail" value="Vận chuyển container (FTL/LTL)" data-parent="svc1" />
+                  <label for="svc1_7">Vận chuyển container (FTL/LTL)</label>
+                </div>
+              </div>
+            </div>
+            <!-- Kho hàng -->
+            <div class="service-category">
+              <div class="service-header">
+                <input type="checkbox" id="svc2" name="serviceMain" value="Kho hàng" />
+                <label for="svc2">2. Kho hàng</label>
+              </div>
+              <div class="service-details">
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc2_1" name="serviceDetail" value="Lưu kho ngắn hạn" data-parent="svc2" />
+                  <label for="svc2_1">Lưu kho ngắn hạn</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc2_2" name="serviceDetail" value="Lưu kho dài hạn" data-parent="svc2" />
+                  <label for="svc2_2">Lưu kho dài hạn</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc2_3" name="serviceDetail" value="Kho lạnh – kho mát" data-parent="svc2" />
+                  <label for="svc2_3">Kho lạnh – kho mát</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc2_4" name="serviceDetail" value="Kiểm đếm hàng hóa" data-parent="svc2" />
+                  <label for="svc2_4">Kiểm đếm hàng hóa</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc2_5" name="serviceDetail" value="Nhập kho/xuất kho" data-parent="svc2" />
+                  <label for="svc2_5">Nhập kho/xuất kho</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc2_6" name="serviceDetail" value="Quản lý tồn kho theo SKU" data-parent="svc2" />
+                  <label for="svc2_6">Quản lý tồn kho theo SKU</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc2_7" name="serviceDetail" value="Dán nhãn – phân loại" data-parent="svc2" />
+                  <label for="svc2_7">Dán nhãn – phân loại</label>
+                </div>
+              </div>
+            </div>
+            <!-- Xếp dỡ hàng hóa -->
+            <div class="service-category">
+              <div class="service-header">
+                <input type="checkbox" id="svc3" name="serviceMain" value="Xếp dỡ hàng hóa" />
+                <label for="svc3">3. Xếp dỡ hàng hóa</label>
+              </div>
+              <div class="service-details">
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc3_1" name="serviceDetail" value="Bốc xếp tại kho" data-parent="svc3" />
+                  <label for="svc3_1">Bốc xếp tại kho</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc3_2" name="serviceDetail" value="Bốc xếp tại cảng" data-parent="svc3" />
+                  <label for="svc3_2">Bốc xếp tại cảng</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc3_3" name="serviceDetail" value="Bốc xếp hàng container" data-parent="svc3" />
+                  <label for="svc3_3">Bốc xếp hàng container</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc3_4" name="serviceDetail" value="Palletizing / Depalletizing" data-parent="svc3" />
+                  <label for="svc3_4">Palletizing / Depalletizing</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc3_5" name="serviceDetail" value="Kiểm tra hư hỏng khi xếp dỡ" data-parent="svc3" />
+                  <label for="svc3_5">Kiểm tra hư hỏng khi xếp dỡ</label>
+                </div>
+              </div>
+            </div>
+            <!-- Quản lý chứng từ / đơn hàng -->
+            <div class="service-category">
+              <div class="service-header">
+                <input type="checkbox" id="svc4" name="serviceMain" value="Quản lý chứng từ/đơn hàng" />
+                <label for="svc4">4. Quản lý chứng từ / đơn hàng</label>
+              </div>
+              <div class="service-details">
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc4_1" name="serviceDetail" value="Theo dõi đơn hàng (Track & Trace)" data-parent="svc4" />
+                  <label for="svc4_1">Theo dõi đơn hàng (Track & Trace)</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc4_2" name="serviceDetail" value="Xuất hóa đơn, chứng từ vận tải" data-parent="svc4" />
+                  <label for="svc4_2">Xuất hóa đơn, chứng từ vận tải</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc4_3" name="serviceDetail" value="Quản lý vận đơn (B/L, AWB…)" data-parent="svc4" />
+                  <label for="svc4_3">Quản lý vận đơn (B/L, AWB…)</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc4_4" name="serviceDetail" value="Khai báo hải quan" data-parent="svc4" />
+                  <label for="svc4_4">Khai báo hải quan</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc4_5" name="serviceDetail" value="Đối soát COD" data-parent="svc4" />
+                  <label for="svc4_5">Đối soát COD</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc4_6" name="serviceDetail" value="Tạo báo cáo logistics" data-parent="svc4" />
+                  <label for="svc4_6">Tạo báo cáo logistics</label>
+                </div>
+              </div>
+            </div>
+            <!-- Lập kế hoạch -->
+            <div class="service-category">
+              <div class="service-header">
+                <input type="checkbox" id="svc5" name="serviceMain" value="Lập kế hoạch" />
+                <label for="svc5">5. Lập kế hoạch</label>
+              </div>
+              <div class="service-details">
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc5_1" name="serviceDetail" value="Lên kế hoạch vận tải" data-parent="svc5" />
+                  <label for="svc5_1">Lên kế hoạch vận tải</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc5_2" name="serviceDetail" value="Tối ưu tuyến đường" data-parent="svc5" />
+                  <label for="svc5_2">Tối ưu tuyến đường</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc5_3" name="serviceDetail" value="Phân bổ tài xế – xe" data-parent="svc5" />
+                  <label for="svc5_3">Phân bổ tài xế – xe</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc5_4" name="serviceDetail" value="Dự báo tồn kho" data-parent="svc5" />
+                  <label for="svc5_4">Dự báo tồn kho</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc5_5" name="serviceDetail" value="Lập kế hoạch nhập/xuất" data-parent="svc5" />
+                  <label for="svc5_5">Lập kế hoạch nhập/xuất</label>
+                </div>
+                <div class="service-detail-item">
+                  <input type="checkbox" id="svc5_6" name="serviceDetail" value="Quản lý nguồn lực kho" data-parent="svc5" />
+                  <label for="svc5_6">Quản lý nguồn lực kho</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="error" id="errServices"></div>
+        </div>
+        <div class="group">
+          <div class="group-title">Tài liệu liên quan</div>
+          <div class="field">
+            <label for="businessLicense">Giấy phép kinh doanh</label>
+            <div class="upload-area">
+              <label for="businessLicense" class="upload-label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <span id="businessLicenseLabel">Chọn tệp tải lên (PDF, JPG, PNG)</span>
+              </label>
+              <input type="file" id="businessLicense" name="businessLicense" class="upload-input" accept=".pdf,.jpg,.jpeg,.png" required />
+              <div class="file-name" id="businessLicenseFile"></div>
+            </div>
+            <div class="error" id="errBusinessLicense"></div>
+          </div>
+          <div class="field">
+            <label for="idCard">CMND/CCCD người đại diện</label>
+            <div class="upload-area">
+              <label for="idCard" class="upload-label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <span id="idCardLabel">Chọn tệp tải lên (PDF, JPG, PNG)</span>
+              </label>
+              <input type="file" id="idCard" name="idCard" class="upload-input" accept=".pdf,.jpg,.jpeg,.png" required />
+              <div class="file-name" id="idCardFile"></div>
+            </div>
+            <div class="error" id="errIdCard"></div>
+          </div>
+          <div class="field">
+            <label for="authorization">Giấy ủy quyền <span style="color:var(--muted);font-weight:400;font-size:13px">(nếu không phải giám đốc đăng ký)</span></label>
+            <div class="upload-area">
+              <label for="authorization" class="upload-label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <span id="authorizationLabel">Chọn tệp tải lên (PDF, JPG, PNG)</span>
+              </label>
+              <input type="file" id="authorization" name="authorization" class="upload-input" accept=".pdf,.jpg,.jpeg,.png" />
+              <div class="file-name" id="authorizationFile"></div>
+            </div>
+            <div class="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span>Tài liệu này chỉ bắt buộc nếu người đăng ký không phải là giám đốc công ty.</span></div>
+            <div class="error" id="errAuthorization"></div>
+          </div>
+        </div>
+        <div class="group">
+          <div class="group-title">Bảo mật</div>
+          <div class="row-vertical">
+            <div class="field input">
+              <label for="password">Mật khẩu</label>
+              <div class="input-control">
+                <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>
+                <input id="password" name="password" type="password" placeholder="Ít nhất 6 ký tự" minlength="6" required />
+              </div>
+              <div class="error" id="errPassword"></div>
+              <div class="strength" id="pwdStrength"><div class="strength-bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div><span id="pwdStrengthText" class="muted" style="text-align:left">Độ mạnh mật khẩu</span></div>
+            </div>
+            <div class="field input">
+              <label for="confirmPassword">Xác nhận mật khẩu</label>
+              <div class="input-control">
+                <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>
+                <input id="confirmPassword" name="confirmPassword" type="password" minlength="6" required />
+              </div>
+              <div class="error" id="errConfirm"></div>
+            </div>
+          </div>
+          <div class="terms">
+            <input id="terms" type="checkbox" required />
+            <label for="terms" style="color:var(--muted)">Tôi đồng ý với <a href="#" target="_blank" style="color:var(--primary);font-weight:700">điều khoản sử dụng</a>.</label>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn" type="submit">Hoàn tất đăng ký</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script>
+    const form = document.getElementById('tplSignup');
+    const companyName = document.getElementById('companyName');
+    const address = document.getElementById('address');
+    const taxId = document.getElementById('taxId');
+    const accountNumber = document.getElementById('accountNumber');
+    const accountHolder = document.getElementById('accountHolder');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirmPassword');
+    const strengthEl = document.getElementById('pwdStrength');
+    const strengthTextEl = document.getElementById('pwdStrengthText');
+    const businessLicense = document.getElementById('businessLicense');
+    const idCard = document.getElementById('idCard');
+    const authorization = document.getElementById('authorization');
+    const serviceModal = document.getElementById('serviceModal');
+    const servicesTrigger = document.getElementById('servicesTrigger');
+    const servicesTags = document.getElementById('servicesTags');
+    const closeServiceModal = document.getElementById('closeServiceModal');
+    const cancelServiceModal = document.getElementById('cancelServiceModal');
+    const confirmServiceModal = document.getElementById('confirmServiceModal');
+
+    const banks = [
+      {value: 'Vietcombank', label: 'Vietcombank - Ngân hàng Ngoại thương Việt Nam'},
+      {value: 'VietinBank', label: 'VietinBank - Ngân hàng Công thương Việt Nam'},
+      {value: 'BIDV', label: 'BIDV - Ngân hàng Đầu tư và Phát triển Việt Nam'},
+      {value: 'Agribank', label: 'Agribank - Ngân hàng Nông nghiệp và Phát triển Nông thôn'},
+      {value: 'Techcombank', label: 'Techcombank - Ngân hàng Kỹ thương Việt Nam'},
+      {value: 'ACB', label: 'ACB - Ngân hàng Á Châu'},
+      {value: 'MB', label: 'MB Bank - Ngân hàng Quân đội'},
+      {value: 'VPBank', label: 'VPBank - Ngân hàng Việt Nam Thịnh Vượng'},
+      {value: 'TPBank', label: 'TPBank - Ngân hàng Tiên Phong'},
+      {value: 'Sacombank', label: 'Sacombank - Ngân hàng Sài Gòn Thương Tín'},
+      {value: 'HDBank', label: 'HDBank - Ngân hàng Phát triển TP.HCM'},
+      {value: 'VIB', label: 'VIB - Ngân hàng Quốc tế'},
+      {value: 'SHB', label: 'SHB - Ngân hàng Sài Gòn - Hà Nội'},
+      {value: 'MSB', label: 'MSB - Ngân hàng Hàng Hải'},
+      {value: 'OCB', label: 'OCB - Ngân hàng Phương Đông'},
+      {value: 'SeABank', label: 'SeABank - Ngân hàng Đông Nam Á'},
+      {value: 'VietCapitalBank', label: 'VietCapitalBank - Ngân hàng Bản Việt'},
+      {value: 'SCB', label: 'SCB - Ngân hàng Sài Gòn'},
+      {value: 'other', label: 'Ngân hàng khác'}
+    ];
+
+    const bankNameInput = document.getElementById('bankName');
+    const bankNameValue = document.getElementById('bankNameValue');
+    const bankSuggestions = document.getElementById('bankSuggestions');
+    let selectedBankIndex = -1;
+
+    function filterBanks(query){
+      if(!query) return banks;
+      const q = query.toLowerCase();
+      return banks.filter(b => b.label.toLowerCase().includes(q) || b.value.toLowerCase().includes(q));
+    }
+
+    function highlightMatch(text, query){
+      if(!query) return text;
+      const regex = new RegExp(`(${query})`, 'gi');
+      return text.replace(regex, '<mark>$1</mark>');
+    }
+
+    function renderSuggestions(query){
+      const filtered = filterBanks(query);
+      if(filtered.length === 0){
+        bankSuggestions.innerHTML = '<div class="bank-suggestion-item" style="color:var(--muted)">Không tìm thấy ngân hàng</div>';
+        bankSuggestions.classList.add('show');
+        return;
+      }
+      bankSuggestions.innerHTML = filtered.map((bank, idx) => 
+        `<div class="bank-suggestion-item" data-value="${bank.value}" data-label="${bank.label}" data-index="${idx}">${highlightMatch(bank.label, query)}</div>`
+      ).join('');
+      bankSuggestions.classList.add('show');
+      selectedBankIndex = -1;
+
+      document.querySelectorAll('.bank-suggestion-item').forEach(item => {
+        item.addEventListener('click', ()=>{
+          const label = item.getAttribute('data-label');
+          const value = item.getAttribute('data-value');
+          if(label && value){
+            bankNameInput.value = label;
+            bankNameValue.value = value;
+            bankSuggestions.classList.remove('show');
+          }
+        });
+      });
+    }
+
+    bankNameInput.addEventListener('input', ()=>{
+      const query = bankNameInput.value.trim();
+      if(query){
+        renderSuggestions(query);
+      } else {
+        bankSuggestions.classList.remove('show');
+      }
+      bankNameValue.value = '';
+    });
+
+    bankNameInput.addEventListener('focus', ()=>{
+      if(bankNameInput.value.trim()){
+        renderSuggestions(bankNameInput.value.trim());
+      }
+    });
+
+    bankNameInput.addEventListener('blur', ()=>{
+      setTimeout(()=>{
+        bankSuggestions.classList.remove('show');
+      }, 200);
+    });
+
+    bankNameInput.addEventListener('keydown', (e)=>{
+      const items = bankSuggestions.querySelectorAll('.bank-suggestion-item');
+      if(items.length === 0) return;
+
+      if(e.key === 'ArrowDown'){
+        e.preventDefault();
+        selectedBankIndex = (selectedBankIndex + 1) % items.length;
+        items.forEach((item, idx) => {
+          item.classList.toggle('active', idx === selectedBankIndex);
+        });
+        items[selectedBankIndex].scrollIntoView({block: 'nearest'});
+      } else if(e.key === 'ArrowUp'){
+        e.preventDefault();
+        selectedBankIndex = selectedBankIndex <= 0 ? items.length - 1 : selectedBankIndex - 1;
+        items.forEach((item, idx) => {
+          item.classList.toggle('active', idx === selectedBankIndex);
+        });
+        items[selectedBankIndex].scrollIntoView({block: 'nearest'});
+      } else if(e.key === 'Enter'){
+        e.preventDefault();
+        if(selectedBankIndex >= 0 && items[selectedBankIndex]){
+          const label = items[selectedBankIndex].getAttribute('data-label');
+          const value = items[selectedBankIndex].getAttribute('data-value');
+          if(label && value){
+            bankNameInput.value = label;
+            bankNameValue.value = value;
+            bankSuggestions.classList.remove('show');
+          }
+        }
+      } else if(e.key === 'Escape'){
+        bankSuggestions.classList.remove('show');
+      }
+    });
+
+    // Modal controls
+    servicesTrigger.addEventListener('click', ()=>{
+      serviceModal.classList.add('open');
+    });
+    closeServiceModal.addEventListener('click', ()=>{
+      serviceModal.classList.remove('open');
+    });
+    cancelServiceModal.addEventListener('click', ()=>{
+      serviceModal.classList.remove('open');
+    });
+    serviceModal.addEventListener('click', (e)=>{
+      if(e.target === serviceModal){
+        serviceModal.classList.remove('open');
+      }
+    });
+
+    // Render tags
+    function renderServiceTags(){
+      const selected = [];
+      document.querySelectorAll('input[name="serviceMain"]:checked').forEach(cb=>{
+        selected.push(cb.value);
+      });
+      document.querySelectorAll('input[name="serviceDetail"]:checked').forEach(cb=>{
+        selected.push(cb.value);
+      });
+      servicesTags.innerHTML = '';
+      selected.forEach(service=>{
+        const tag = document.createElement('div');
+        tag.className = 'service-tag';
+        tag.innerHTML = `<span>${service}</span><button class="service-tag-remove" data-service="${service}">×</button>`;
+        servicesTags.appendChild(tag);
+      });
+      // Remove handlers
+      document.querySelectorAll('.service-tag-remove').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const service = btn.getAttribute('data-service');
+          document.querySelectorAll('input[name="serviceMain"], input[name="serviceDetail"]').forEach(cb=>{
+            if(cb.value === service){
+              cb.checked = false;
+              // Uncheck children if parent
+              if(cb.name === 'serviceMain'){
+                const parentId = cb.id;
+                document.querySelectorAll(`input[name="serviceDetail"][data-parent="${parentId}"]`).forEach(child=>{
+                  child.checked = false;
+                });
+              }
+            }
+          });
+          renderServiceTags();
+        });
+      });
+    }
+
+    confirmServiceModal.addEventListener('click', ()=>{
+      renderServiceTags();
+      serviceModal.classList.remove('open');
+    });
+
+    // File upload handlers
+    businessLicense.addEventListener('change', (e)=>{
+      const file = e.target.files[0];
+      document.getElementById('businessLicenseFile').textContent = file ? `📄 ${file.name}` : '';
+    });
+    idCard.addEventListener('change', (e)=>{
+      const file = e.target.files[0];
+      document.getElementById('idCardFile').textContent = file ? `📄 ${file.name}` : '';
+    });
+    authorization.addEventListener('change', (e)=>{
+      const file = e.target.files[0];
+      document.getElementById('authorizationFile').textContent = file ? `📄 ${file.name}` : '';
+    });
+
+    // Auto-check parent when any detail is checked
+    document.querySelectorAll('input[name="serviceDetail"]').forEach(detailCheckbox => {
+      detailCheckbox.addEventListener('change', ()=>{
+        const parentId = detailCheckbox.getAttribute('data-parent');
+        const parent = document.getElementById(parentId);
+        const siblings = document.querySelectorAll(`input[name="serviceDetail"][data-parent="${parentId}"]`);
+        const anyChecked = Array.from(siblings).some(cb => cb.checked);
+        if(anyChecked && !parent.checked){
+          parent.checked = true;
+        }
+      });
+    });
+
+    // Uncheck all details when parent is unchecked
+    document.querySelectorAll('input[name="serviceMain"]').forEach(mainCheckbox => {
+      mainCheckbox.addEventListener('change', ()=>{
+        if(!mainCheckbox.checked){
+          const parentId = mainCheckbox.id;
+          document.querySelectorAll(`input[name="serviceDetail"][data-parent="${parentId}"]`).forEach(cb => {
+            cb.checked = false;
+          });
+        }
+      });
+    });
+
+    function isTaxId(value){
+      return /^\d{10,13}$/.test(value);
+    }
+
+    function updateValidity(el, ok){
+      el.classList.remove('valid','invalid');
+      el.classList.add(ok ? 'valid' : 'invalid');
+    }
+
+    function passwordStrength(p){
+      let score = 0;
+      if(p.length >= 6) score++;
+      if(/[A-Z]/.test(p) && /[a-z]/.test(p)) score++;
+      if(/[0-9]/.test(p) || /[^A-Za-z0-9]/.test(p)) score++;
+      return Math.min(score,3);
+    }
+
+    function renderStrength(score){
+      strengthEl.classList.remove('lvl-1','lvl-2','lvl-3');
+      if(score <= 1){
+        strengthEl.classList.add('lvl-1');
+        strengthTextEl.textContent = 'Yếu';
+      } else if(score === 2){
+        strengthEl.classList.add('lvl-2');
+        strengthTextEl.textContent = 'Tốt';
+      } else {
+        strengthEl.classList.add('lvl-3');
+        strengthTextEl.textContent = 'Mạnh';
+      }
+    }
+
+    function clearErrors(){
+      ['errCompanyName','errAddress','errTaxId','errAccountNumber','errBankName','errAccountHolder','errServices','errBusinessLicense','errIdCard','errPassword','errConfirm'].forEach(id=>{
+        const el = document.getElementById(id);
+        if(el) el.textContent = '';
+      });
+    }
+
+    // Realtime validation
+    taxId.addEventListener('input', ()=>{
+      const t = taxId.value.trim();
+      const ok = isTaxId(t);
+      document.getElementById('errTaxId').textContent = ok ? '' : 'MST phải gồm 10–13 chữ số';
+      updateValidity(taxId, ok);
+    });
+    password.addEventListener('input', ()=>{
+      const ok = password.value.length >= 6;
+      document.getElementById('errPassword').textContent = ok ? '' : 'Mật khẩu ít nhất 6 ký tự';
+      updateValidity(password, ok);
+      renderStrength(passwordStrength(password.value));
+    });
+    confirmPassword.addEventListener('input', ()=>{
+      const ok = (confirmPassword.value === password.value && confirmPassword.value.length >= 6);
+      document.getElementById('errConfirm').textContent = ok ? '' : 'Xác nhận mật khẩu không khớp';
+      updateValidity(confirmPassword, ok);
+    });
+
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      clearErrors();
+      let ok = true;
+
+      if(!companyName.value.trim()){
+        document.getElementById('errCompanyName').textContent = 'Vui lòng nhập tên công ty';
+        ok = false;
+      }
+      updateValidity(companyName, !!companyName.value.trim());
+
+      if(!address.value.trim()){
+        document.getElementById('errAddress').textContent = 'Vui lòng nhập địa chỉ trụ sở';
+        ok = false;
+      }
+
+      const t = taxId.value.trim();
+      if(!isTaxId(t)){
+        document.getElementById('errTaxId').textContent = 'MST phải gồm 10–13 chữ số';
+        ok = false;
+      }
+      updateValidity(taxId, isTaxId(t));
+
+      if(!accountNumber.value.trim()){
+        document.getElementById('errAccountNumber').textContent = 'Vui lòng nhập số tài khoản';
+        ok = false;
+      }
+      updateValidity(accountNumber, !!accountNumber.value.trim());
+
+      if(!bankNameValue.value){
+        document.getElementById('errBankName').textContent = 'Vui lòng chọn ngân hàng';
+        ok = false;
+      }
+
+      if(!accountHolder.value.trim()){
+        document.getElementById('errAccountHolder').textContent = 'Vui lòng nhập tên chủ tài khoản';
+        ok = false;
+      }
+      updateValidity(accountHolder, !!accountHolder.value.trim());
+
+      const checkedMain = document.querySelectorAll('input[name="serviceMain"]:checked');
+      const checkedDetail = document.querySelectorAll('input[name="serviceDetail"]:checked');
+      if(checkedMain.length === 0 && checkedDetail.length === 0){
+        document.getElementById('errServices').textContent = 'Vui lòng chọn ít nhất một dịch vụ';
+        ok = false;
+      }
+
+      if(!businessLicense.files.length){
+        document.getElementById('errBusinessLicense').textContent = 'Vui lòng tải lên giấy phép kinh doanh';
+        ok = false;
+      }
+      if(!idCard.files.length){
+        document.getElementById('errIdCard').textContent = 'Vui lòng tải lên CMND/CCCD người đại diện';
+        ok = false;
+      }
+
+      if(password.value.length < 6){
+        document.getElementById('errPassword').textContent = 'Mật khẩu ít nhất 6 ký tự';
+        ok = false;
+      }
+      updateValidity(password, password.value.length >= 6);
+      renderStrength(passwordStrength(password.value));
+
+      if(confirmPassword.value !== password.value){
+        document.getElementById('errConfirm').textContent = 'Xác nhận mật khẩu không khớp';
+        ok = false;
+      }
+      updateValidity(confirmPassword, confirmPassword.value === password.value && confirmPassword.value.length >= 6);
+
+      if(!document.getElementById('terms').checked){
+        alert('Bạn cần đồng ý với điều khoản sử dụng');
+        ok = false;
+      }
+      if(!ok) return;
+
+      // Save minimal profile and mark logged-in (pending state) then redirect
+      const companyNameValueRaw = companyName.value.trim();
+      const taxIdValueRaw = taxId.value.trim();
+      try {
+        localStorage.setItem('lc-role','3pl');
+        localStorage.setItem('lc-logged-in','1');
+        localStorage.setItem('lc-company', companyNameValueRaw);
+        localStorage.setItem('lc-taxid', taxIdValueRaw);
+      } catch(e) {}
+      const companyNameValue = encodeURIComponent(companyNameValueRaw);
+      const taxIdValue = encodeURIComponent(taxIdValueRaw);
+      window.location.href = `signup-pending.html?status=pending&company=${companyNameValue}&taxId=${taxIdValue}`;
+    });
+  </script>
+</body>
+</html>

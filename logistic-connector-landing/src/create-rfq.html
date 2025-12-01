@@ -1,0 +1,1009 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tạo yêu cầu RFQ</title>
+  <style>
+    :root{
+      --primary:#0b74da;
+      --primary-hover:#085aa7;
+      --text:#0b2136;
+      --muted:#6b7280;
+      --bg:#f5f8fc;
+      --card:#ffffff;
+      --border:rgba(15,23,42,0.08);
+      --ok:#10b981;
+      --warn:#f59e0b;
+      --err:#ef4444;
+      --shadow-sm:0 2px 8px rgba(15,23,42,0.04);
+      --shadow-md:0 4px 16px rgba(15,23,42,0.08);
+      --shadow-lg:0 12px 32px rgba(15,23,42,0.12);
+      --shadow-xl:0 20px 48px rgba(15,23,42,0.15);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+      background:linear-gradient(135deg,#dbeafe 0%,#e0e7ff 35%,#fce7f3 70%,#fef3c7 100%);
+      background-size:400% 400%;
+      animation:gradientFlow 15s ease infinite;
+      color:var(--text);
+      min-height:100vh;
+      line-height:1.6;
+    }
+    @keyframes gradientFlow{
+      0%,100%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+    }
+    header{
+      background:rgba(255,255,255,0.95);
+      backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--border);
+      position:sticky;
+      top:0;
+      z-index:100;
+      box-shadow:var(--shadow-sm);
+    }
+    .header-wrap{
+      max-width:1280px;
+      margin:0 auto;
+      padding:14px 28px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .logo{
+      font-size:20px;
+      font-weight:800;
+      background:linear-gradient(135deg,#0b74da,#3b82f6);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      text-decoration:none;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      transition:transform 0.2s ease;
+    }
+    .logo:hover{transform:scale(1.05)}
+    .logo .dot{
+      width:12px;
+      height:12px;
+      border-radius:50%;
+      background:linear-gradient(135deg,#0b74da,#3b82f6);
+      box-shadow:0 2px 10px rgba(11,116,218,0.5);
+      animation:pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse{
+      0%,100%{transform:scale(1);opacity:1}
+      50%{transform:scale(1.2);opacity:0.8}
+    }
+    .nav{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+    .nav a{
+      color:var(--text);
+      text-decoration:none;
+      font-size:14px;
+      font-weight:600;
+      padding:8px 14px;
+      border-radius:8px;
+      transition:all 0.2s ease;
+      white-space:nowrap;
+    }
+    .nav a:hover{
+      background:rgba(11,116,218,0.08);
+      transform:translateY(-1px);
+    }
+    .nav a.active{
+      color:var(--primary);
+      background:rgba(11,116,218,0.1);
+    }
+    main{max-width:900px;margin:40px auto;padding:0 28px}
+    .page-header{margin-bottom:32px;text-align:center}
+    .page-title{
+      font-size:36px;
+      font-weight:900;
+      margin-bottom:12px;
+      background:linear-gradient(135deg,#0b2136,#1e40af);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      letter-spacing:-0.8px;
+    }
+    .page-desc{
+      font-size:15px;
+      color:var(--muted);
+      font-weight:500;
+      line-height:1.6;
+    }
+    .form-card{
+      background:rgba(255,255,255,0.98);
+      backdrop-filter:blur(12px);
+      border:1px solid var(--border);
+      border-radius:24px;
+      padding:40px;
+      box-shadow:var(--shadow-xl);
+      transition:all 0.3s ease;
+    }
+    .form-card:hover{
+      transform:translateY(-3px);
+      box-shadow:0 28px 64px rgba(15,23,42,0.18);
+    }
+    .form-row{margin-bottom:24px}
+    .form-row label{
+      display:block;
+      font-size:13px;
+      font-weight:700;
+      margin-bottom:10px;
+      color:var(--text);
+      text-transform:uppercase;
+      letter-spacing:0.5px;
+    }
+    .form-row input,.form-row select,.form-row textarea{
+      width:100%;
+      padding:14px 18px;
+      border:2px solid var(--border);
+      border-radius:12px;
+      font-size:15px;
+      font-family:inherit;
+      transition:all 0.2s ease;
+      color:var(--text);
+      background:#fff;
+    }
+    .form-row input:focus,.form-row select:focus,.form-row textarea:focus{
+      outline:none;
+      border-color:var(--primary);
+      background:#f9fbff;
+      box-shadow:0 0 0 4px rgba(11,116,218,0.1);
+    }
+    .form-row textarea{
+      min-height:100px;
+      resize:vertical;
+      line-height:1.6;
+    }
+    .form-row-group{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+    }
+    .form-row-triple{
+      display:grid;
+      grid-template-columns:1fr 1fr 1fr;
+      gap:16px;
+    }
+    .service-tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+    }
+    .service-tag{
+      padding:8px 16px;
+      background:rgba(11,116,218,0.08);
+      border:2px solid rgba(11,116,218,0.2);
+      border-radius:24px;
+      font-size:13px;
+      font-weight:700;
+      color:var(--primary);
+      cursor:pointer;
+      transition:all 0.25s ease;
+    }
+    .service-tag:hover{
+      background:rgba(11,116,218,0.15);
+      border-color:var(--primary);
+      transform:scale(1.05);
+    }
+    .service-tag.active{
+      background:linear-gradient(135deg,var(--primary),#3b82f6);
+      color:#fff;
+      border-color:var(--primary);
+      box-shadow:var(--shadow-sm);
+    }
+    .dynamic-fields{
+      margin-top:24px;
+      padding:24px;
+      background:linear-gradient(135deg,rgba(11,116,218,0.05),rgba(59,130,246,0.05));
+      border-radius:16px;
+      border-left:4px solid var(--primary);
+      animation:slideIn 0.3s ease;
+    }
+    @keyframes slideIn{
+      from{opacity:0;transform:translateY(10px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+    .checkbox-row{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      margin-top:24px;
+      padding:18px 24px;
+      background:linear-gradient(135deg,rgba(11,116,218,0.08),rgba(59,130,246,0.08));
+      border-radius:14px;
+      border:2px dashed var(--primary);
+      transition:all 0.3s ease;
+    }
+    .checkbox-row:hover{
+      background:linear-gradient(135deg,rgba(11,116,218,0.12),rgba(59,130,246,0.12));
+      transform:scale(1.01);
+    }
+    .checkbox-row input[type="checkbox"]{
+      width:22px;
+      height:22px;
+      margin:0;
+      cursor:pointer;
+      accent-color:var(--primary);
+    }
+    .checkbox-row label{
+      margin:0;
+      font-weight:700;
+      color:var(--primary);
+      font-size:15px;
+      cursor:pointer;
+    }
+    .form-actions{
+      display:flex;
+      gap:14px;
+      margin-top:32px;
+    }
+    .btn{
+      padding:16px 32px;
+      border:none;
+      border-radius:12px;
+      font-size:16px;
+      font-weight:700;
+      cursor:pointer;
+      text-decoration:none;
+      transition:all 0.3s ease;
+      display:inline-block;
+    }
+    .btn-primary{
+      background:linear-gradient(135deg,#0b74da,#3b82f6);
+      color:#fff;
+      box-shadow:var(--shadow-md);
+    }
+    .btn-primary:hover{
+      transform:translateY(-3px);
+      box-shadow:var(--shadow-lg);
+    }
+    .btn-secondary{
+      background:#fff;
+      border:2px solid var(--border);
+      color:var(--text);
+    }
+    .btn-secondary:hover{
+      background:rgba(11,116,218,0.05);
+      border-color:var(--primary);
+      transform:translateY(-2px);
+    }
+    .note{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:6px;
+      font-style:italic;
+    }
+    .term{
+      display:inline-block;
+      margin-left:8px;
+      padding:3px 10px;
+      border-radius:999px;
+      background:rgba(11,116,218,0.1);
+      color:var(--primary);
+      font-weight:700;
+      font-size:11px;
+    }
+    @media(max-width:768px){
+      .form-row-group,.form-row-triple{
+        grid-template-columns:1fr;
+      }
+      .form-card{padding:28px 24px}
+      .page-title{font-size:28px}
+      .form-actions{flex-direction:column}
+      .btn{width:100%;text-align:center}
+    }
+    @media(max-width:480px){
+      .header-wrap{padding:12px 20px}
+      .page-title{font-size:24px}
+      .nav{gap:10px}
+      .nav a{font-size:13px;padding:6px 12px}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-wrap">
+      <a class="logo" href="index.html"><span class="dot"></span>Tạo RFQ</a>
+      <nav class="nav">
+        <a href="customer-dashboard.html">Dashboard</a>
+        <a href="marketplace.html">Marketplace</a>
+        <a href="index.html" id="logoutBtn">Đăng xuất</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <div class="page-header">
+      <h1 class="page-title">Tạo yêu cầu báo giá (RFQ)</h1>
+      <p class="page-desc">Điền thông tin chi tiết để nhận báo giá từ các nhà cung cấp 3PL</p>
+    </div>
+    <form class="form-card" id="rfqForm">
+      <div class="form-row">
+        <label>Loại dịch vụ <span style="color:var(--err)">*</span></label>
+        <select id="serviceType" required>
+          <option value="">-- Chọn loại dịch vụ --</option>
+          <option value="transport">🚚 Vận chuyển</option>
+          <option value="documents">📄 Quản lý chứng từ</option>
+          <option value="warehouse">🏢 Kho hàng / Lưu kho</option>
+          <option value="loading">📦 Xếp dỡ hàng hóa</option>
+          <option value="planning">🗓️ Lập kế hoạch</option>
+        </select>
+        <div class="service-tags" id="serviceTags"></div>
+      </div>
+
+      <!-- Dynamic fields based on service type -->
+      <div id="dynamicFields"></div>
+
+      <div id="locationFields">
+        <div class="form-row-group">
+          <div class="form-row">
+            <label>Tỉnh/Thành phố xuất phát <span style="color:var(--err)">*</span></label>
+            <input type="text" id="originCity" placeholder="VD: Hà Nội" required list="cities" />
+            <datalist id="cities">
+              <option value="An Giang">
+              <option value="Bà Rịa - Vũng Tàu">
+              <option value="Bắc Giang">
+              <option value="Bắc Kạn">
+              <option value="Bạc Liêu">
+              <option value="Bắc Ninh">
+              <option value="Bến Tre">
+              <option value="Bình Định">
+              <option value="Bình Dương">
+              <option value="Bình Phước">
+              <option value="Bình Thuận">
+              <option value="Cà Mau">
+              <option value="Cần Thơ">
+              <option value="Cao Bằng">
+              <option value="Đà Nẵng">
+              <option value="Đắk Lắk">
+              <option value="Đắk Nông">
+              <option value="Điện Biên">
+              <option value="Đồng Nai">
+              <option value="Đồng Tháp">
+              <option value="Gia Lai">
+              <option value="Hà Giang">
+              <option value="Hà Nam">
+              <option value="Hà Nội">
+              <option value="Hà Tĩnh">
+              <option value="Hải Dương">
+              <option value="Hải Phòng">
+              <option value="Hậu Giang">
+              <option value="Hòa Bình">
+              <option value="Hưng Yên">
+              <option value="Khánh Hòa">
+              <option value="Kiên Giang">
+              <option value="Kon Tum">
+              <option value="Lai Châu">
+              <option value="Lâm Đồng">
+              <option value="Lạng Sơn">
+              <option value="Lào Cai">
+              <option value="Long An">
+              <option value="Nam Định">
+              <option value="Nghệ An">
+              <option value="Ninh Bình">
+              <option value="Ninh Thuận">
+              <option value="Phú Thọ">
+              <option value="Phú Yên">
+              <option value="Quảng Bình">
+              <option value="Quảng Nam">
+              <option value="Quảng Ngãi">
+              <option value="Quảng Ninh">
+              <option value="Quảng Trị">
+              <option value="Sóc Trăng">
+              <option value="Sơn La">
+              <option value="Tây Ninh">
+              <option value="Thái Bình">
+              <option value="Thái Nguyên">
+              <option value="Thanh Hóa">
+              <option value="Thừa Thiên Huế">
+              <option value="Tiền Giang">
+              <option value="TP. Hồ Chí Minh">
+              <option value="Trà Vinh">
+              <option value="Tuyên Quang">
+              <option value="Vĩnh Long">
+              <option value="Vĩnh Phúc">
+              <option value="Yên Bái">
+            </datalist>
+          </div>
+          <div class="form-row">
+            <label>Tỉnh/Thành phố đích đến <span style="color:var(--err)">*</span></label>
+            <input type="text" id="destinationCity" placeholder="VD: TP. Hồ Chí Minh" required list="cities" />
+          </div>
+        </div>
+        <div class="form-row-group">
+          <div class="form-row">
+            <label>Địa chỉ cụ thể điểm lấy hàng</label>
+            <input type="text" id="originAddress" placeholder="Số nhà, đường, phường/xã" />
+          </div>
+          <div class="form-row">
+            <label>Địa chỉ cụ thể điểm giao hàng</label>
+            <input type="text" id="destinationAddress" placeholder="Số nhà, đường, phường/xã" />
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <label>Tiêu đề yêu cầu <span style="color:var(--err)">*</span></label>
+        <input type="text" id="title" placeholder="Hệ thống sẽ tự động tạo tiêu đề dựa trên thông tin" readonly style="background:#f9fafb" />
+      </div>
+      <div class="form-row">
+        <label>Mô tả chi tiết hàng hóa / dịch vụ <span style="color:var(--err)">*</span></label>
+        <textarea id="cargoDesc" placeholder="VD: 100 thùng carton điện thoại iPhone, mỗi thùng 50 chiếc, cần đóng gói cẩn thận..." required style="min-height:100px"></textarea>
+        <p class="note">💡 Mô tả càng chi tiết (tên hàng, số lượng, đặc điểm) càng nhận được báo giá chính xác</p>
+      </div>
+      <div class="form-row-triple">
+        <div class="form-row">
+          <label>Khối lượng (kg)</label>
+          <input type="number" id="weight" placeholder="500" />
+        </div>
+        <div class="form-row">
+          <label>Thể tích (m³)</label>
+          <input type="number" step="0.1" id="dimensions" placeholder="2.5" />
+        </div>
+        <div class="form-row">
+          <label>Số kiện/pallet</label>
+          <input type="number" id="quantity" placeholder="10" />
+        </div>
+      </div>
+      <div class="form-row-group">
+        <div class="form-row">
+          <label>Ngày bắt đầu dịch vụ <span style="color:var(--err)">*</span></label>
+          <input type="date" id="startDate" required />
+        </div>
+        <div class="form-row">
+          <label>Ngày kết thúc / giao hàng</label>
+          <input type="date" id="endDate" />
+        </div>
+      </div>
+      <div class="form-row">
+        <label>Ngân sách dự kiến (VNĐ)</label>
+        <input type="text" id="budget" placeholder="VD: 5,000,000 - 7,000,000 hoặc Thương lượng" />
+      </div>
+      <div class="form-row">
+        <label>Yêu cầu đặc biệt & Ghi chú</label>
+        <textarea id="specialReq" placeholder="VD: Hàng dễ vỡ cần xếp cẩn thận, yêu cầu bảo hiểm 100%, cần xe tải trọng 5 tấn, giao hàng ngoài giờ, cần giấy phép vận chuyển đặc biệt..." style="min-height:90px"></textarea>
+        <p class="note">📝 Ghi chú thêm các yêu cầu về: bảo hiểm, loại xe, giờ giao hàng, chứng từ, SLA<span class="term" title="Service Level Agreement — cam kết mức dịch vụ (thời gian, chất lượng)">Giải nghĩa: SLA là cam kết mức dịch vụ</span>, v.v.</p>
+      </div>
+      <div class="form-row">
+        <label>Thông tin liên hệ</label>
+        <div class="form-row-group">
+          <input type="text" id="contactPerson" placeholder="Người liên hệ" />
+          <input type="tel" id="contactPhone" placeholder="Số điện thoại" />
+        </div>
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="postToMarket" />
+        <label for="postToMarket">📢 Đăng lên Marketplace để nhận nhiều báo giá từ các 3PL</label>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Tạo RFQ</button>
+        <a href="customer-dashboard.html" class="btn btn-secondary">Hủy</a>
+      </div>
+    </form>
+  </main>
+  <script>
+    // Guard: customer only
+    try {
+      const role = localStorage.getItem('lc-role');
+      const loggedIn = localStorage.getItem('lc-logged-in');
+      if (loggedIn !== '1' || role !== 'customer') {
+        alert('Bạn phải đăng nhập với tài khoản khách hàng để tạo RFQ');
+        window.location.href = 'index.html';
+      }
+    } catch(e) {
+      window.location.href = 'index.html';
+    }
+
+    // Service type sub-categories
+    const serviceOptions = {
+      transport: ['Đường bộ', 'Đường sắt', 'Đường biển', 'Đường hàng không', 'Multimodal'],
+      documents: ['Xuất khẩu', 'Nhập khẩu', 'Quá cảnh', 'Tạm nhập tái xuất', 'Giấy phép'],
+      warehouse: ['Kho thường', 'Kho lạnh', 'Kho nguy hiểm', 'Kho ngoại quan', 'Kho FBA'],
+      loading: ['Xếp container', 'Dỡ container', 'Xếp dỡ pallet', 'Xếp dỡ rời'],
+      planning: ['Lập tuyến', 'Lập lịch', 'Tối ưu chi phí', 'Ghép hàng (LTL/FTL)']
+    };
+
+    // Update service tags when service type changes
+    document.getElementById('serviceType').addEventListener('change', function() {
+      const serviceType = this.value;
+      const tagsContainer = document.getElementById('serviceTags');
+      const dynamicFields = document.getElementById('dynamicFields');
+      const locationFields = document.getElementById('locationFields');
+      
+      tagsContainer.innerHTML = '';
+      dynamicFields.innerHTML = '';
+      
+      // Ẩn/hiện địa điểm theo nghiệp vụ
+      // Chỉ giữ địa điểm cho vận chuyển; ẩn cho documents/loading/warehouse/planning
+      if (serviceType === 'documents' || serviceType === 'loading' || serviceType === 'warehouse' || serviceType === 'planning') {
+        locationFields.style.display = 'none';
+        // Remove required attribute when hidden
+        document.getElementById('originCity').removeAttribute('required');
+        document.getElementById('destinationCity').removeAttribute('required');
+      } else {
+        locationFields.style.display = 'block';
+        document.getElementById('originCity').setAttribute('required', 'required');
+        document.getElementById('destinationCity').setAttribute('required', 'required');
+      }
+      
+      if (serviceType && serviceOptions[serviceType]) {
+        serviceOptions[serviceType].forEach(option => {
+          const tag = document.createElement('span');
+          tag.className = 'service-tag';
+          tag.textContent = option;
+          tag.onclick = function() {
+            this.classList.toggle('active');
+            updateTitle();
+          };
+          tagsContainer.appendChild(tag);
+        });
+
+        // Add dynamic fields based on service type
+        if (serviceType === 'transport') {
+          dynamicFields.innerHTML = `
+            <div class="dynamic-fields">
+              <h4 style="font-size:14px;font-weight:800;margin-bottom:12px">📦 Thông tin vận chuyển</h4>
+              <div class="form-row-group">
+                <div class="form-row">
+                  <label>Loại xe yêu cầu</label>
+                  <select id="vehicleType">
+                    <option value="">-- Chọn loại xe --</option>
+                    <option value="truck-1t">Xe tải 1 tấn</option>
+                    <option value="truck-5t">Xe tải 5 tấn</option>
+                    <option value="truck-10t">Xe tải 10 tấn</option>
+                    <option value="container-20">Container 20 feet</option>
+                    <option value="container-40">Container 40 feet</option>
+                    <option value="refrigerated">Xe lạnh</option>
+                  </select>
+                </div>
+                <div class="form-row">
+                  <label>Loại hàng hóa</label>
+                  <select id="cargoType">
+                    <option value="">-- Chọn loại --</option>
+                    <option value="general">Hàng thường</option>
+                    <option value="fragile">Hàng dễ vỡ</option>
+                    <option value="frozen">Hàng đông lạnh</option>
+                    <option value="dangerous">Hàng nguy hiểm</option>
+                    <option value="valuable">Hàng giá trị cao</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <label style="display:flex;align-items:center;gap:8px">
+                  <input type="checkbox" id="needInsurance" style="width:auto;margin:0">
+                  Yêu cầu bảo hiểm hàng hóa
+                </label>
+              </div>
+            </div>
+          `;
+          // Update title on related field changes
+          document.getElementById('vehicleType')?.addEventListener('change', updateTitle);
+          document.getElementById('cargoType')?.addEventListener('change', updateTitle);
+          document.getElementById('needInsurance')?.addEventListener('change', updateTitle);
+        } else if (serviceType === 'warehouse') {
+          dynamicFields.innerHTML = `
+            <div class="dynamic-fields">
+              <h4 style="font-size:14px;font-weight:800;margin-bottom:12px">🏢 Thông tin kho bãi</h4>
+              <div class="form-row">
+                <label>Khu vực/kho mong muốn</label>
+                <input type="text" id="warehouseLocation" placeholder="VD: Bình Dương, Long An, TP. Hồ Chí Minh" list="cities">
+              </div>
+              <div class="form-row-group">
+                <div class="form-row">
+                  <label>Diện tích cần thuê (m²)</label>
+                  <input type="number" id="warehouseArea" placeholder="100">
+                </div>
+                <div class="form-row">
+                  <label>Thời gian thuê</label>
+                  <select id="rentalPeriod">
+                    <option value="">-- Chọn --</option>
+                    <option value="daily">Theo ngày</option>
+                    <option value="weekly">Theo tuần</option>
+                    <option value="monthly">Theo tháng</option>
+                    <option value="yearly">Theo năm</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <label>Yêu cầu kho</label>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="warehouse-req" value="racking" style="width:auto;margin:0">
+                    Có giá kệ
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="warehouse-req" value="forklift" style="width:auto;margin:0">
+                    Có xe nâng
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="warehouse-req" value="security" style="width:auto;margin:0">
+                    An ninh 24/7
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="warehouse-req" value="wms" style="width:auto;margin:0">
+                    Hệ thống WMS
+                  </label>
+                </div>
+              </div>
+            </div>
+          `;
+          document.getElementById('warehouseLocation')?.addEventListener('input', updateTitle);
+          document.getElementById('rentalPeriod')?.addEventListener('change', updateTitle);
+        } else if (serviceType === 'loading') {
+          dynamicFields.innerHTML = `
+            <div class="dynamic-fields">
+              <h4 style="font-size:14px;font-weight:800;margin-bottom:12px">📦 Thông tin xếp dỡ</h4>
+              <div class="form-row">
+                <label>Địa chỉ nơi cần xếp dỡ <span style="color:var(--err)">*</span></label>
+                <input type="text" id="loadingLocation" placeholder="VD: Cảng Cát Lái, Quận 2, TP. Hồ Chí Minh" required>
+              </div>
+              <div class="form-row-group">
+                <div class="form-row">
+                  <label>Loại công việc</label>
+                  <select id="loadingType">
+                    <option value="">-- Chọn loại --</option>
+                    <option value="loading">Xếp hàng</option>
+                    <option value="unloading">Dỡ hàng</option>
+                    <option value="both">Xếp và dỡ</option>
+                    <option value="rearrange">Sắp xếp lại</option>
+                  </select>
+                </div>
+                <div class="form-row">
+                  <label>Số lượng container/xe</label>
+                  <input type="number" id="vehicleCount" placeholder="1" min="1">
+                </div>
+              </div>
+              <div class="form-row-group">
+                <div class="form-row">
+                  <label>Số lượng công nhân cần</label>
+                  <input type="number" id="workerCount" placeholder="5" min="1">
+                </div>
+                <div class="form-row">
+                  <label>Thời gian dự kiến (giờ)</label>
+                  <input type="number" id="estimatedHours" placeholder="4" min="1" step="0.5">
+                </div>
+              </div>
+              <div class="form-row">
+                <label>Thiết bị/Máy móc yêu cầu</label>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="equipment-req" value="forklift" style="width:auto;margin:0">
+                    Xe nâng (Forklift)
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="equipment-req" value="crane" style="width:auto;margin:0">
+                    Cần cẩu (Crane)
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="equipment-req" value="pallet-jack" style="width:auto;margin:0">
+                    Xe nâng tay (Pallet Jack)
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="equipment-req" value="conveyor" style="width:auto;margin:0">
+                    Băng chuyền (Conveyor)
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="equipment-req" value="truck" style="width:auto;margin:0">
+                    Xe tải
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="equipment-req" value="other" style="width:auto;margin:0">
+                    Khác (ghi chú)
+                  </label>
+                </div>
+              </div>
+              <div class="form-row-group">
+                <div class="form-row">
+                  <label>Ngày xếp dỡ <span style="color:var(--err)">*</span></label>
+                  <input type="date" id="loadingDate" required>
+                </div>
+                <div class="form-row">
+                  <label>Giờ bắt đầu</label>
+                  <input type="time" id="loadingTime">
+                </div>
+              </div>
+            </div>
+          `;
+          // Set min date
+          const today = new Date().toISOString().split('T')[0];
+          document.getElementById('loadingDate').min = today;
+          document.getElementById('loadingLocation')?.addEventListener('input', updateTitle);
+          document.getElementById('loadingType')?.addEventListener('change', updateTitle);
+        } else if (serviceType === 'documents') {
+          dynamicFields.innerHTML = `
+            <div class="dynamic-fields">
+              
+              <div class="form-row-group">
+                <div class="form-row">
+                  <label>Loại hình</label>
+                  <select id="customsType">
+                    <option value="">-- Chọn loại --</option>
+                    <option value="import">Nhập khẩu</option>
+                    <option value="export">Xuất khẩu</option>
+                    <option value="transit">Quá cảnh</option>
+                    <option value="temporary">Tạm nhập tái xuất</option>
+                  </select>
+                </div>
+                <div class="form-row">
+                  <label>Cửa khẩu / Cảng</label>
+                  <input type="text" id="customsPort" placeholder="VD: Cảng Cát Lái, Tân Sơn Nhất">
+                </div>
+              </div>
+              <div class="form-row-group">
+                <div class="form-row">
+                  <label>Mã HS Code <span style="color:var(--err)">*</span></label>
+                  <input type="text" id="hsCode" placeholder="VD: 8517.12.00" required>
+                </div>
+                <div class="form-row">
+                  <label>Xuất xứ hàng hóa</label>
+                  <input type="text" id="originCountry" placeholder="VD: Trung Quốc">
+                </div>
+              </div>
+              <div class="form-row-group">
+                <div class="form-row">
+                  <label>Giá trị hàng hóa (USD)</label>
+                  <input type="number" id="cargoValue" placeholder="10000" step="0.01">
+                </div>
+                <div class="form-row">
+                  <label>Số lượng kiện/container</label>
+                  <input type="number" id="customsQuantity" placeholder="1">
+                </div>
+              </div>
+              <div class="form-row">
+                <label>Chứng từ và giấy tờ cần hỗ trợ</label>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="customs-docs" value="co" style="width:auto;margin:0">
+                    C/O - Giấy chứng nhận xuất xứ
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="customs-docs" value="invoice" style="width:auto;margin:0">
+                    Commercial Invoice
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="customs-docs" value="packing-list" style="width:auto;margin:0">
+                    Packing List
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="customs-docs" value="bl" style="width:auto;margin:0">
+                    B/L - Bill of Lading
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="customs-docs" value="ciq" style="width:auto;margin:0">
+                    Giấy kiểm dịch (CIQ)
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="customs-docs" value="permit" style="width:auto;margin:0">
+                    Giấy phép nhập khẩu
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="customs-docs" value="certificate" style="width:auto;margin:0">
+                    Giấy chứng nhận (FDA, CE...)
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="customs-docs" value="vat" style="width:auto;margin:0">
+                    Hóa đơn VAT
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="customs-docs" value="insurance" style="width:auto;margin:0">
+                    Bảo hiểm hàng hóa
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="customs-docs" value="other" style="width:auto;margin:0">
+                    Khác (ghi trong ghi chú)
+                  </label>
+                </div>
+              </div>
+              <div class="form-row">
+                <label>Loại hàng hóa đặc biệt (nếu có)</label>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px">
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="special-cargo" value="dangerous" style="width:auto;margin:0">
+                    Hàng nguy hiểm
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="special-cargo" value="frozen" style="width:auto;margin:0">
+                    Hàng lạnh
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="special-cargo" value="chemical" style="width:auto;margin:0">
+                    Hóa chất
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="special-cargo" value="food" style="width:auto;margin:0">
+                    Thực phẩm
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="special-cargo" value="pharma" style="width:auto;margin:0">
+                    Dược phẩm
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;font-weight:normal">
+                    <input type="checkbox" class="special-cargo" value="animal" style="width:auto;margin:0">
+                    Động vật sống
+                  </label>
+                </div>
+              </div>
+            </div>
+          `;
+          document.getElementById('customsType')?.addEventListener('change', updateTitle);
+          document.getElementById('customsPort')?.addEventListener('input', updateTitle);
+        } else if (serviceType === 'planning') {
+          dynamicFields.innerHTML = `
+            <div class="dynamic-fields">
+              <div class="form-row-group">
+                <div class="form-row">
+                  <label>Phạm vi lập kế hoạch</label>
+                  <select id="planningScope">
+                    <option value="">-- Chọn --</option>
+                    <option value="route">Lập tuyến</option>
+                    <option value="schedule">Lập lịch</option>
+                    <option value="cost">Tối ưu chi phí</option>
+                    <option value="consolidation">Ghép hàng (LTL/FTL)</option>
+                  </select>
+                </div>
+                <div class="form-row">
+                  <label>Ghi chú yêu cầu kế hoạch</label>
+                  <textarea id="planningNotes" placeholder="Mục tiêu, ràng buộc, thời gian thực hiện"></textarea>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      }
+      
+      updateTitle();
+    });
+
+    // Auto-generate title based on form inputs
+    function updateTitle() {
+      const serviceSel = document.getElementById('serviceType');
+      const serviceVal = serviceSel.value;
+      const originCity = document.getElementById('originCity').value;
+      const destinationCity = document.getElementById('destinationCity').value;
+      const activeTags = Array.from(document.querySelectorAll('.service-tag.active')).map(t => t.textContent).join(', ');
+      const serviceText = serviceVal ? serviceSel.options[serviceSel.selectedIndex].text.replace(/[🚚🏢📦📋🎁⚡🔗]/g, '').trim() : '';
+      const tagText = activeTags ? ` - ${activeTags}` : '';
+
+      let title = '';
+      if (!serviceVal) { document.getElementById('title').value = ''; return; }
+
+      if (serviceVal === 'transport') {
+        if (originCity && destinationCity) title = `${serviceText}${tagText}: ${originCity} → ${destinationCity}`;
+      } else if (serviceVal === 'warehouse') {
+        const wl = document.getElementById('warehouseLocation')?.value || destinationCity;
+        if (wl) title = `${serviceText}${tagText}: ${wl}`;
+      } else if (serviceVal === 'loading') {
+        const ll = document.getElementById('loadingLocation')?.value;
+        if (ll) title = `${serviceText}${tagText}: ${ll}`;
+      } else if (serviceVal === 'documents') {
+        const ctSel = document.getElementById('customsType');
+        const ct = ctSel && ctSel.value ? ctSel.options[ctSel.selectedIndex].text : '';
+        const port = document.getElementById('customsPort')?.value || '';
+        title = `${serviceText}${tagText}${ct ? ' - ' + ct : ''}${port ? ': ' + port : ''}`.trim();
+      } else if (serviceVal === 'planning') {
+        title = `${serviceText}${tagText}`;
+      }
+
+      document.getElementById('title').value = title;
+    }
+
+    // Update title when cities change
+    document.getElementById('originCity').addEventListener('input', updateTitle);
+    document.getElementById('destinationCity').addEventListener('input', updateTitle);
+
+    document.getElementById('rfqForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      // Collect selected service tags
+      const selectedTags = Array.from(document.querySelectorAll('.service-tag.active')).map(t => t.textContent);
+      
+      // Collect dynamic fields based on service type
+      const serviceType = document.getElementById('serviceType').value;
+      const additionalData = {};
+      
+      if (serviceType === 'transport') {
+        additionalData.vehicleType = document.getElementById('vehicleType')?.value || '';
+        additionalData.cargoType = document.getElementById('cargoType')?.value || '';
+        additionalData.needInsurance = document.getElementById('needInsurance')?.checked || false;
+      } else if (serviceType === 'warehouse') {
+        additionalData.warehouseLocation = document.getElementById('warehouseLocation')?.value || '';
+        additionalData.warehouseArea = document.getElementById('warehouseArea')?.value || '';
+        additionalData.rentalPeriod = document.getElementById('rentalPeriod')?.value || '';
+        additionalData.warehouseReq = Array.from(document.querySelectorAll('.warehouse-req:checked')).map(cb => cb.value);
+      } else if (serviceType === 'loading') {
+        additionalData.loadingLocation = document.getElementById('loadingLocation')?.value || '';
+        additionalData.loadingType = document.getElementById('loadingType')?.value || '';
+        additionalData.vehicleCount = document.getElementById('vehicleCount')?.value || '';
+        additionalData.workerCount = document.getElementById('workerCount')?.value || '';
+        additionalData.estimatedHours = document.getElementById('estimatedHours')?.value || '';
+        additionalData.loadingDate = document.getElementById('loadingDate')?.value || '';
+        additionalData.loadingTime = document.getElementById('loadingTime')?.value || '';
+        additionalData.equipmentReq = Array.from(document.querySelectorAll('.equipment-req:checked')).map(cb => cb.value);
+      } else if (serviceType === 'documents') {
+        additionalData.customsType = document.getElementById('customsType')?.value || '';
+        additionalData.customsPort = document.getElementById('customsPort')?.value || '';
+        additionalData.hsCode = document.getElementById('hsCode')?.value || '';
+        additionalData.originCountry = document.getElementById('originCountry')?.value || '';
+        additionalData.cargoValue = document.getElementById('cargoValue')?.value || '';
+        additionalData.customsQuantity = document.getElementById('customsQuantity')?.value || '';
+        additionalData.customsDocs = Array.from(document.querySelectorAll('.customs-docs:checked')).map(cb => cb.value);
+        additionalData.specialCargo = Array.from(document.querySelectorAll('.special-cargo:checked')).map(cb => cb.value);
+      } else if (serviceType === 'planning') {
+        additionalData.planningScope = document.getElementById('planningScope')?.value || '';
+        additionalData.planningNotes = document.getElementById('planningNotes')?.value || '';
+      }
+
+      const rfq = {
+        id: 'RFQ-' + Date.now(),
+        title: document.getElementById('title').value,
+        service: serviceType,
+        serviceTags: selectedTags,
+        origin: document.getElementById('originCity').value || 'N/A',
+        destination: document.getElementById('destinationCity').value || 'N/A',
+        originAddress: document.getElementById('originAddress').value || '',
+        destinationAddress: document.getElementById('destinationAddress').value || '',
+        cargo: document.getElementById('cargoDesc').value,
+        weight: document.getElementById('weight').value || '',
+        dimensions: document.getElementById('dimensions').value || '',
+        quantity: document.getElementById('quantity').value || '',
+        startDate: document.getElementById('startDate').value,
+        endDate: document.getElementById('endDate').value || '',
+        budget: document.getElementById('budget').value || 'Thương lượng',
+        specialReq: document.getElementById('specialReq').value || 'Không có',
+        contactPerson: document.getElementById('contactPerson').value || localStorage.getItem('lc-name') || '',
+        contactPhone: document.getElementById('contactPhone').value || localStorage.getItem('lc-contact') || '',
+        additionalData: additionalData,
+        quotesCount: 0,
+        status: 'open',
+        postedDate: new Date().toISOString().split('T')[0],
+        customerName: localStorage.getItem('lc-name') || 'Khách hàng',
+        postToMarket: document.getElementById('postToMarket').checked
+      };
+
+      try {
+        // Save to customer's RFQs
+        let myRFQs = JSON.parse(localStorage.getItem('lc-my-rfqs') || '[]');
+        myRFQs.unshift(rfq);
+        localStorage.setItem('lc-my-rfqs', JSON.stringify(myRFQs));
+
+        // If post to market, add to public marketplace
+        if (rfq.postToMarket) {
+          let marketRFQs = JSON.parse(localStorage.getItem('lc-rfqs') || '[]');
+          marketRFQs.unshift(rfq);
+          localStorage.setItem('lc-rfqs', JSON.stringify(marketRFQs));
+        }
+
+        alert('✅ RFQ đã được tạo thành công!\n' + 
+          (rfq.postToMarket ? 'RFQ đã được đăng lên Marketplace.' : 'RFQ được lưu trong danh sách riêng của bạn.'));
+        
+        if (rfq.postToMarket) {
+          window.location.href = 'marketplace.html';
+        } else {
+          window.location.href = 'customer-dashboard.html';
+        }
+      } catch(err) {
+        alert('Lỗi khi lưu RFQ: ' + err.message);
+      }
+    });
+
+    // Set min date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('startDate').min = today;
+    document.getElementById('endDate').min = today;
+
+    // Pre-fill contact info
+    document.getElementById('contactPerson').value = localStorage.getItem('lc-name') || '';
+    document.getElementById('contactPhone').value = localStorage.getItem('lc-contact') || '';
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      try { localStorage.removeItem('lc-logged-in'); } catch(err) {}
+      window.location.href = 'index.html';
+    });
+  </script>
+</body>
+</html>

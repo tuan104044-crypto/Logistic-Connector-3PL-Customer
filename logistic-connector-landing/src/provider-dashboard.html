@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard 3PL - Logistic Connector</title>
+  <style>
+    :root{
+      --primary:#0b74da;
+      --primary-hover:#085aa7;
+      --text:#0b2136;
+      --muted:#6b7280;
+      --bg:#f5f8fc;
+      --card:#ffffff;
+      --border:rgba(15,23,42,0.08);
+      --ok:#10b981;
+      --warn:#f59e0b;
+      --shadow-sm:0 2px 8px rgba(15,23,42,0.04);
+      --shadow-md:0 4px 16px rgba(15,23,42,0.08);
+      --shadow-lg:0 12px 32px rgba(15,23,42,0.12);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+      background:linear-gradient(135deg,#dbeafe 0%,#e0f2fe 50%,#e0e7ff 100%);
+      color:var(--text);
+      line-height:1.6;
+      min-height:100vh;
+    }
+    header{
+      background:rgba(255,255,255,0.95);
+      backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--border);
+      position:sticky;
+      top:0;
+      z-index:100;
+      box-shadow:var(--shadow-sm);
+    }
+    .wrap{max-width:1200px;margin:0 auto;padding:14px 24px}
+    .row{display:flex;justify-content:space-between;align-items:center}
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      text-decoration:none;
+      color:var(--text);
+      font-weight:800;
+      transition:transform 0.2s ease;
+    }
+    .brand:hover{transform:scale(1.02)}
+    .brand .dot{
+      width:12px;
+      height:12px;
+      border-radius:50%;
+      background:linear-gradient(135deg,var(--primary),#3b82f6);
+      box-shadow:0 2px 8px rgba(11,116,218,0.4);
+      animation:pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse{
+      0%,100%{transform:scale(1)}
+      50%{transform:scale(1.15)}
+    }
+    .actions{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{
+      padding:10px 18px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      background:#fff;
+      cursor:pointer;
+      font-weight:700;
+      font-size:14px;
+      transition:all 0.2s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+    .btn-primary{
+      border-color:var(--primary);
+      background:linear-gradient(135deg,var(--primary),#3b82f6);
+      color:#fff;
+      box-shadow:var(--shadow-md);
+    }
+    .btn-primary:hover{box-shadow:var(--shadow-lg)}
+    .btn-danger{
+      border-color:#ef4444;
+      color:#ef4444;
+      background:#fff;
+    }
+    .btn-danger:hover{background:#fef2f2}
+    main{
+      max-width:1200px;
+      margin:24px auto;
+      padding:0 24px;
+      display:grid;
+      grid-template-columns:280px 1fr;
+      gap:20px;
+    }
+    .sidebar{
+      background:rgba(255,255,255,0.95);
+      backdrop-filter:blur(10px);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:16px;
+      box-shadow:var(--shadow-sm);
+      height:fit-content;
+      position:sticky;
+      top:80px;
+    }
+    .side-title{
+      font-size:12px;
+      color:var(--muted);
+      margin:4px 8px 12px;
+      text-transform:uppercase;
+      letter-spacing:0.5px;
+      font-weight:700;
+    }
+    .nav{display:flex;flex-direction:column;gap:6px}
+    .nav a{
+      padding:10px 14px;
+      border-radius:10px;
+      color:var(--text);
+      text-decoration:none;
+      border:1px solid transparent;
+      font-weight:600;
+      font-size:14px;
+      transition:all 0.2s ease;
+    }
+    .nav a:hover{
+      border-color:var(--primary);
+      background:rgba(11,116,218,0.05);
+      transform:translateX(4px);
+    }
+    .content{display:flex;flex-direction:column;gap:20px}
+    .card{
+      background:rgba(255,255,255,0.95);
+      backdrop-filter:blur(10px);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:24px;
+      box-shadow:var(--shadow-md);
+      transition:all 0.3s ease;
+    }
+    .card:hover{
+      transform:translateY(-2px);
+      box-shadow:var(--shadow-lg);
+    }
+    .card h2{
+      margin:0 0 16px;
+      font-size:20px;
+      font-weight:800;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      gap:16px;
+    }
+    .stat{
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:16px;
+      background:linear-gradient(135deg,#ffffff,#f8fbff);
+      transition:all 0.2s ease;
+    }
+    .stat:hover{
+      transform:translateY(-2px);
+      box-shadow:var(--shadow-sm);
+      border-color:var(--primary);
+    }
+    .stat .num{
+      font-size:32px;
+      font-weight:800;
+      color:var(--primary);
+      margin-top:8px;
+    }
+    .info-row{
+      display:flex;
+      justify-content:space-between;
+      padding:12px 0;
+      border-bottom:1px solid var(--border);
+      transition:background 0.2s ease;
+    }
+    .info-row:hover{background:rgba(11,116,218,0.02)}
+    .info-row:last-child{border-bottom:none}
+    .badge{
+      display:inline-block;
+      border-radius:999px;
+      padding:4px 12px;
+      font-size:12px;
+      font-weight:700;
+    }
+    .badge.ok{
+      background:rgba(16,185,129,0.15);
+      color:var(--ok);
+    }
+    .badge.warn{
+      background:rgba(245,158,11,0.15);
+      color:var(--warn);
+    }
+    .service-list{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+      gap:12px;
+    }
+    .service-item{
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:14px;
+      background:linear-gradient(135deg,#ffffff,#fafbff);
+      transition:all 0.2s ease;
+    }
+    .service-item:hover{
+      transform:translateY(-2px);
+      box-shadow:var(--shadow-sm);
+      border-color:var(--primary);
+    }
+    .muted{color:var(--muted);font-size:13px;font-weight:600}
+    @media(max-width:1024px){
+      main{grid-template-columns:1fr}
+      .sidebar{position:static}
+    }
+    @media(max-width:640px){
+      .actions{width:100%}
+      .btn{flex:1}
+      .grid{grid-template-columns:1fr}
+      .service-list{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap row">
+      <a class="brand" href="index.html"><span class="dot"></span><strong>Logistic Connector</strong></a>
+      <div class="actions">
+        <a class="btn" href="account-settings.html">Quản lý tài khoản</a>
+        <button class="btn btn-danger" id="logoutBtn">Đăng xuất</button>
+      </div>
+    </div>
+  </header>
+  <main>
+    <aside class="sidebar">
+      <div class="side-title">Danh mục</div>
+      <nav class="nav">
+        <a href="#overview">Tổng quan</a>
+        <a href="#rfq">RFQ chờ báo giá</a>
+        <a href="#my-quotes">Báo giá đã gửi</a>
+        <a href="#orders">Đơn hàng</a>
+        <a href="#schedule">Lịch vận hành</a>
+        <a href="#performance">Hiệu suất/SLA</a>
+        <a href="#reconciliation">Đối soát</a>
+        <a href="#messages">Tin nhắn</a>
+        <a href="#settings">Cài đặt</a>
+      </nav>
+    </aside>
+    <section class="content">
+      <div class="card" id="overview">
+        <h2>Tổng quan</h2>
+        <div class="grid">
+          <div class="stat"><div class="muted">Dịch vụ đang hoạt động</div><div class="num" id="statServices">-</div></div>
+          <div class="stat"><div class="muted">Yêu cầu mới</div><div class="num" id="statRequests">-</div></div>
+          <div class="stat"><div class="muted">Báo giá đã gửi</div><div class="num" id="statQuotes">-</div></div>
+        </div>
+      </div>
+      <div class="card" id="profile">
+        <h2>Hồ sơ công ty</h2>
+        <div class="info-row"><span>Tên công ty</span><strong id="companyName">-</strong></div>
+        <div class="info-row"><span>Mã số thuế</span><strong id="taxId">-</strong></div>
+        <div class="info-row"><span>Trạng thái</span><span id="status"><span class="badge warn">Đang chờ</span></span></div>
+      </div>
+      <div class="card" id="rfq">
+        <h2>RFQ chờ báo giá</h2>
+        <div class="muted">Xem RFQ từ Marketplace và gửi báo giá</div>
+        <div style="margin-top:10px">
+          <a class="btn btn-primary" href="marketplace.html">📊 Xem Marketplace</a>
+        </div>
+        <div class="service-list" id="marketRFQList" style="margin-top:12px">
+          <!-- Market RFQs will be inserted here -->
+        </div>
+      </div>
+      <div class="card" id="my-quotes">
+        <h2>Báo giá đã gửi</h2>
+        <div class="muted">Theo dõi trạng thái báo giá của bạn</div>
+        <div class="service-list" id="myQuotesList" style="margin-top:12px">
+          <!-- My quotes will be inserted here -->
+        </div>
+      </div>
+      <div class="card" id="orders">
+        <h2>Đơn hàng</h2>
+        <div class="muted">Chưa có đơn hàng nào</div>
+      </div>
+      <div class="card" id="schedule">
+        <h2>Lịch vận hành</h2>
+        <div class="muted">Lịch giao nhận, tối ưu tuyến, phân công tài xế</div>
+      </div>
+      <div class="card" id="performance">
+        <h2>Hiệu suất/SLA</h2>
+        <div class="grid">
+          <div class="stat"><div class="muted">On-time delivery</div><div class="num">-</div></div>
+          <div class="stat"><div class="muted">SLA compliance</div><div class="num">-</div></div>
+          <div class="stat"><div class="muted">Avg response time</div><div class="num">-</div></div>
+        </div>
+      </div>
+      <div class="card" id="reconciliation">
+        <h2>Đối soát</h2>
+        <div class="muted">Đối soát cước phí, COD, phí phát sinh</div>
+      </div>
+      <div class="card" id="messages">
+        <h2>Tin nhắn</h2>
+        <div class="muted">Trao đổi với khách hàng</div>
+      </div>
+      <div class="card" id="settings">
+        <h2>Cài đặt</h2>
+        <a class="btn" href="account-settings.html">Quản lý tài khoản</a>
+        <div style="margin-top:10px"><a class="btn" href="#services">Quản lý dịch vụ</a></div>
+      </div>
+    </section>
+  </main>
+  <script>
+    // Guard: must be logged in with 3PL role
+    try{if(localStorage.getItem('lc-logged-in')!=='1' || localStorage.getItem('lc-role')!=='3pl'){location.href='index.html';}}catch(e){}
+    // Load profile from localStorage and query
+    const params = new URLSearchParams(location.search);
+    const company = params.get('company') || localStorage.getItem('lc-company') || '-';
+    const taxid = params.get('taxId') || localStorage.getItem('lc-taxid') || '-';
+    document.getElementById('companyName').textContent = company;
+    document.getElementById('taxId').textContent = taxid;
+    // Mark status as accepted if coming from pending accepted
+    const statusParam = params.get('status');
+    if(statusParam === 'accepted' || localStorage.getItem('lc-3pl-approved')==='1'){
+      document.getElementById('status').innerHTML = '<span class="badge ok">Đã duyệt</span>';
+    }
+
+    // Load market RFQs and my quotes
+    try {
+      const marketRFQs = JSON.parse(localStorage.getItem('lc-rfqs') || '[]');
+      const myQuotes = JSON.parse(localStorage.getItem('lc-my-quotes') || '[]');
+      const myServices = JSON.parse(localStorage.getItem('lc-3pl-services') || '[]');
+      const allQuotes = JSON.parse(localStorage.getItem('lc-quotes') || '[]');
+
+      // Update stats
+      document.getElementById('statServices').textContent = '2';
+      const filteredRFQs = myServices.length ? marketRFQs.filter(r => {
+        const svc = r.service;
+        const normalized = svc==='customs' ? 'documents' : svc;
+        return myServices.includes(normalized);
+      }) : marketRFQs;
+      document.getElementById('statRequests').textContent = filteredRFQs.length;
+      document.getElementById('statQuotes').textContent = myQuotes.length;
+
+      // Render market RFQs
+      const marketRFQList = document.getElementById('marketRFQList');
+      if (filteredRFQs.length === 0) {
+        marketRFQList.innerHTML = '<div class="muted">Chưa có RFQ mới trên Marketplace</div>';
+      } else {
+        marketRFQList.innerHTML = filteredRFQs.slice(0, 4).map(r => `
+          <div class="service-item">
+            <div style="font-weight:700;font-size:13px;margin-bottom:4px">${r.title}</div>
+            <div class="muted" style="font-size:12px">${r.origin} → ${r.destination}</div>
+            <div style="margin-top:6px;font-size:11px;color:var(--primary);font-weight:600">
+              ${r.quotesCount || 0} báo giá • ${r.budget}
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Render my quotes
+      const myQuotesList = document.getElementById('myQuotesList');
+      if (myQuotes.length === 0) {
+        myQuotesList.innerHTML = '<div class="muted">Chưa gửi báo giá nào</div>';
+      } else {
+        myQuotesList.innerHTML = myQuotes.slice(0, 4).map(q => {
+          const statusBadge = q.status === 'approved' 
+            ? '<span class="badge ok">Đã duyệt</span>' 
+            : '<span class="badge warn">Chờ duyệt</span>';
+          return `
+            <div class="service-item">
+              <div style="font-weight:700;font-size:13px;margin-bottom:4px">${q.rfqId}</div>
+              <div class="muted" style="font-size:12px">Giá: ${parseInt(q.price).toLocaleString('vi-VN')} VNĐ</div>
+              <div style="margin-top:6px">${statusBadge}</div>
+            </div>
+          `;
+        }).join('');
+      }
+    } catch(e) {
+      console.error('Error loading data:', e);
+    }
+
+    // Logout clears session
+    document.getElementById('logoutBtn').addEventListener('click',()=>{
+      try{localStorage.removeItem('lc-logged-in');}catch(e){}
+      location.href='index.html';
+    });
+  </script>
+</body>
+</html>

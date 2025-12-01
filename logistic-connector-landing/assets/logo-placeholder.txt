@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="TTV logo">
+  <defs>
+    <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0fa3b1"/>
+      <stop offset="50%" stop-color="#0aa0a8"/>
+      <stop offset="100%" stop-color="#06606a"/>
+    </linearGradient>
+    <radialGradient id="centerGrad" cx="50%" cy="45%" r="50%">
+      <stop offset="0%" stop-color="#ffd07a"/>
+      <stop offset="45%" stop-color="#ff9b2e"/>
+      <stop offset="100%" stop-color="#ff7a00" stop-opacity="0.95"/>
+    </radialGradient>
+    <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="20" stdDeviation="30" flood-color="#004f4f" flood-opacity="0.12"/>
+    </filter>
+    <filter id="innerGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur"/>
+      <feBlend in="SourceGraphic" in2="blur" mode="normal"/>
+    </filter>
+  </defs>
+
+  <!-- Background transparent -->
+  <rect width="100%" height="100%" fill="transparent"/>
+
+  <!-- Outer rings -->
+  <g filter="url(#softShadow)">
+    <circle cx="512" cy="512" r="360" fill="none" stroke="url(#ringGrad)" stroke-width="36"/>
+    <circle cx="512" cy="512" r="300" fill="none" stroke="#17bfc6" stroke-width="28" opacity="0.95"/>
+    <circle cx="512" cy="512" r="240" fill="none" stroke="#1fd3d5" stroke-width="16" opacity="0.9"/>
+  </g>
+
+  <!-- Inner circle -->
+  <circle cx="512" cy="512" r="196" fill="url(#centerGrad)" filter="url(#innerGlow)" />
+
+  <!-- Text TTV -->
+  <text x="50%" y="54%" text-anchor="middle" font-family="Poppins, Montserrat, 'Helvetica Neue', Arial, sans-serif"
+        font-weight="800" font-size="220" fill="#8b3d00" style="mix-blend-mode:screen">
+    TTV
+  </text>
+
+  <!-- subtle inner stroke on text -->
+  <text x="50%" y="54%" text-anchor="middle" font-family="Poppins, Montserrat, 'Helvetica Neue', Arial, sans-serif"
+        font-weight="800" font-size="220" fill="none" stroke="#6a2f00" stroke-width="2" opacity="0.18">
+    TTV
+  </text>
+</svg>

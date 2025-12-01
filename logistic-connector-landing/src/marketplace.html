@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Marketplace - Sàn Logistics</title>
+  <style>
+    :root{--primary:#0b74da;--text:#0b2136;--muted:#6b7280;--bg:#f5f8fc;--card:#ffffff;--border:rgba(15,23,42,0.08);--ok:#10b981;--warn:#f59e0b;--err:#ef4444}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;background:linear-gradient(135deg,#e0f2fe 0%,#f0f9ff 25%,#fef3c7 50%,#fce7f3 75%,#e0e7ff 100%);background-size:400% 400%;animation:gradientShift 15s ease infinite;color:var(--text);min-height:100vh}
+    @keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    header{background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 4px 16px rgba(0,0,0,0.08)}
+    .header-wrap{max-width:1400px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;justify-content:space-between}
+    .logo{font-size:18px;font-weight:800;background:linear-gradient(135deg,#0b74da,#3b82f6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none;display:flex;align-items:center;gap:10px;transition:transform .2s}
+    .logo:hover{transform:scale(1.05)}
+    .logo .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,#0b74da,#3b82f6);box-shadow:0 2px 8px rgba(11,116,218,0.4);animation:pulse 2s ease-in-out infinite}
+    @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.1);opacity:0.8}}
+    .nav{display:flex;gap:12px;align-items:center}
+    .nav a{color:var(--text);text-decoration:none;font-size:13px;font-weight:600;padding:8px 16px;border-radius:8px;transition:all .3s;position:relative;overflow:hidden}
+    .nav a::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(11,116,218,0.1),transparent);transition:left .5s}
+    .nav a:hover::before{left:100%}
+    .nav a:hover{background:rgba(11,116,218,0.08);transform:translateY(-2px)}
+    .nav a.active{color:#fff;background:linear-gradient(135deg,#0b74da,#3b82f6);box-shadow:0 4px 12px rgba(11,116,218,0.3)}
+    .btn-sm{padding:8px 18px;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;box-shadow:0 4px 12px rgba(239,68,68,0.3);transition:all .3s}
+    .btn-sm:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(239,68,68,0.4)}
+    main{max-width:1400px;margin:24px auto;padding:0 24px}
+    .page-title{font-size:28px;font-weight:900;margin-bottom:8px;background:linear-gradient(135deg,#0b2136,#1e40af);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-0.5px}
+    .filter-bar{background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;align-items:end;box-shadow:0 8px 24px rgba(0,0,0,0.06);transition:all .3s}
+    .filter-bar:hover{box-shadow:0 12px 32px rgba(0,0,0,0.1)}
+    .filter-bar label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}
+    .filter-bar select,.filter-bar input{width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;transition:border-color .2s;background:#fff}
+    .filter-bar select:focus,.filter-bar input:focus{outline:none;border-color:var(--primary);background:#f9fbff}
+    .filter-bar button{padding:10px 20px;background:linear-gradient(135deg,#0b74da,#3b82f6);color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:13px;box-shadow:0 4px 12px rgba(11,116,218,0.3);transition:all .3s}
+    .filter-bar button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(11,116,218,0.4)}
+    .rfq-list{display:grid;gap:16px}
+    .rfq-card{background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:16px;padding:20px;transition:transform .2s,border-color .2s;cursor:pointer;position:relative;overflow:hidden}
+    .rfq-card::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(11,116,218,0.05),transparent);transition:left .6s}
+    .rfq-card:hover::before{left:100%}
+    .rfq-card:hover{transform:translateY(-4px);border-color:var(--primary)}
+    .rfq-header{display:flex;justify-content:space-between;align-items:start;margin-bottom:12px}
+    .rfq-id{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+    .rfq-status{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+    .status-open{background:linear-gradient(135deg,#10b981,#059669);color:#fff}
+    .status-quotes{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff}
+    .rfq-title{font-size:17px;font-weight:800;margin-bottom:8px;color:var(--text);line-height:1.4}
+    .rfq-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:14px;padding:12px;background:rgba(11,116,218,0.03);border-radius:10px}
+    .meta-item{display:flex;align-items:center;gap:8px;font-size:13px}
+    .meta-item svg{width:16px;height:16px;color:var(--primary);opacity:0.7}
+    .meta-item .label{color:var(--muted);font-size:12px}
+    .meta-item .value{font-weight:700;color:var(--text)}
+    .rfq-footer{display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:2px solid rgba(11,116,218,0.1)}
+    .quote-count{font-size:13px;color:var(--muted);font-weight:600}
+    .quote-count strong{color:var(--primary);font-size:15px;font-weight:800}
+    .btn-view{padding:8px 16px;background:linear-gradient(135deg,#0b74da,#3b82f6);border:none;color:#fff;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;transition:transform .2s}
+    .btn-view:hover{transform:translateY(-2px)}
+    /* Dark mode basics */
+    .theme-toggle{background:transparent;border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text);cursor:pointer}
+    .dark .filter-bar{background:#1f2937;border-color:#374151}
+    .dark .filter-bar select,.dark .filter-bar input{background:#111827;border-color:#374151;color:#e5e7eb}
+    .dark .rfq-card{background:#1f2937;border-color:#374151}
+    .empty{text-align:center;padding:60px;color:var(--muted);font-size:16px;font-weight:600}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-wrap">
+      <a class="logo" href="index.html"><span class="dot"></span>Marketplace</a>
+      <nav class="nav">
+        <a href="marketplace.html" class="active">Tất cả RFQ</a>
+        <a href="#" id="myQuotesLink">Báo giá của tôi</a>
+        <a href="#" id="backToDashboard">Dashboard</a>
+        <a class="btn-sm" href="index.html" id="logoutBtn">Đăng xuất</a>
+        <button class="theme-toggle" id="themeToggle">Chế độ</button>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <h1 class="page-title">Sàn RFQ - Yêu cầu Báo giá</h1>
+    <div class="filter-bar">
+      <div>
+        <label>Loại dịch vụ</label>
+        <select id="filterService">
+          <option value="">Tất cả</option>
+          <option value="transport">Vận chuyển</option>
+          <option value="documents">Quản lý chứng từ</option>
+          <option value="warehouse">Kho hàng</option>
+          <option value="loading">Xếp dỡ</option>
+          <option value="planning">Lập kế hoạch</option>
+        </select>
+      </div>
+      <div>
+        <label>Xuất phát</label>
+        <input type="text" id="filterOrigin" placeholder="Tỉnh/thành phố" />
+      </div>
+      <div>
+        <label>Đích đến</label>
+        <input type="text" id="filterDestination" placeholder="Tỉnh/thành phố" />
+      </div>
+      <div>
+        <label>Ngày cần</label>
+        <input type="date" id="filterDate" />
+      </div>
+      <div style="display:flex;align-items:end">
+        <button onclick="applyFilters()">Tìm kiếm</button>
+      </div>
+    </div>
+    <div class="rfq-list" id="rfqList">
+      <!-- RFQ cards will be inserted here -->
+    </div>
+  </main>
+  <script>
+    // Theme toggle
+    (function(){
+      const key='lc-theme';
+      function apply(v){ v==='dark'?document.body.classList.add('dark'):document.body.classList.remove('dark'); localStorage.setItem(key,v); }
+      const btn=document.getElementById('themeToggle');
+      btn&&btn.addEventListener('click',()=>{ apply(document.body.classList.contains('dark')?'light':'dark'); });
+      const saved=localStorage.getItem(key); if(saved) apply(saved);
+    })();
+    // Demo data - in production, fetch from API
+    const demoRFQs = [
+      {
+        id: 'RFQ-12345',
+        title: 'Vận chuyển hàng điện tử Hà Nội → TP.HCM',
+        service: 'transport',
+        origin: 'Hà Nội',
+        destination: 'TP. Hồ Chí Minh',
+        cargo: '500kg - Hàng điện tử',
+        deadline: '2025-12-15',
+        budget: '5-7 triệu VNĐ',
+        quotesCount: 3,
+        status: 'quotes',
+        postedDate: '2025-11-25'
+      },
+      {
+        id: 'RFQ-12346',
+        title: 'Lưu kho mát 30 ngày - 1000 pallet',
+        service: 'warehouse',
+        origin: 'Bình Dương',
+        destination: 'Bình Dương',
+        cargo: '1000 pallet - Thực phẩm đông lạnh',
+        deadline: '2025-12-20',
+        budget: '10-15 triệu VNĐ',
+        quotesCount: 1,
+        status: 'quotes',
+        postedDate: '2025-11-26'
+      },
+      {
+        id: 'RFQ-12347',
+        title: 'Vận chuyển container 40ft Hải Phòng → Đà Nẵng',
+        service: 'transport',
+        origin: 'Hải Phòng',
+        destination: 'Đà Nẵng',
+        cargo: 'Container 40ft - Nguyên liệu xây dựng',
+        deadline: '2025-12-10',
+        budget: '8-10 triệu VNĐ',
+        quotesCount: 0,
+        status: 'open',
+        postedDate: '2025-11-27'
+      },
+      {
+        id: 'RFQ-12348',
+        title: 'Xếp dỡ hàng hóa tại cảng Cát Lái',
+        service: 'loading',
+        origin: 'TP. Hồ Chí Minh',
+        destination: 'TP. Hồ Chí Minh',
+        cargo: '200 tấn - Thép cuộn',
+        deadline: '2025-12-05',
+        budget: '3-5 triệu VNĐ',
+        quotesCount: 2,
+        status: 'quotes',
+        postedDate: '2025-11-24'
+      }
+    ];
+
+    // Store in localStorage for demo
+    try {
+      if (!localStorage.getItem('lc-rfqs')) {
+        localStorage.setItem('lc-rfqs', JSON.stringify(demoRFQs));
+      }
+    } catch(e) {}
+
+    function renderRFQs(rfqs) {
+      const list = document.getElementById('rfqList');
+      if (!rfqs || rfqs.length === 0) {
+        list.innerHTML = '<div class="empty">Chưa có RFQ nào</div>';
+        return;
+      }
+      list.innerHTML = rfqs.map(rfq => `
+        <div class="rfq-card" onclick="viewRFQ('${rfq.id}')">
+          <div class="rfq-header">
+            <span class="rfq-id">${rfq.id}</span>
+            <span class="rfq-status ${rfq.status === 'open' ? 'status-open' : 'status-quotes'}">
+              ${rfq.quotesCount === 0 ? '🆕 Mới đăng' : `📊 ${rfq.quotesCount} báo giá`}
+            </span>
+          </div>
+          <h3 class="rfq-title">${rfq.title}</h3>
+          <div class="rfq-meta">
+            <div class="meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span class="label">Từ:</span>
+              <span class="value">${rfq.origin}</span>
+            </div>
+            <div class="meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span class="label">Đến:</span>
+              <span class="value">${rfq.destination}</span>
+            </div>
+            <div class="meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <span class="value">${rfq.cargo}</span>
+            </div>
+            <div class="meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              <span class="label">Cần:</span>
+              <span class="value">${new Date(rfq.deadline).toLocaleDateString('vi-VN')}</span>
+            </div>
+            <div class="meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              <span class="label">Ngân sách:</span>
+              <span class="value">${rfq.budget}</span>
+            </div>
+          </div>
+          <div class="rfq-footer">
+            <span class="quote-count">
+              ${rfq.quotesCount > 0 ? `<strong>${rfq.quotesCount}</strong> nhà cung cấp đã gửi báo giá` : 'Chưa có báo giá nào'}
+            </span>
+            <a class="btn-view" href="rfq-detail.html?id=${rfq.id}" onclick="event.stopPropagation()">Xem chi tiết & Báo giá</a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function viewRFQ(id) {
+      window.location.href = `rfq-detail.html?id=${id}`;
+    }
+
+    function applyFilters() {
+      const service = document.getElementById('filterService').value;
+      const origin = document.getElementById('filterOrigin').value.toLowerCase();
+      const dest = document.getElementById('filterDestination').value.toLowerCase();
+      const date = document.getElementById('filterDate').value;
+
+      let rfqs = JSON.parse(localStorage.getItem('lc-rfqs') || '[]');
+      
+      if (service) rfqs = rfqs.filter(r => {
+        const normalized = r.service==='customs' ? 'documents' : r.service;
+        return normalized === service;
+      });
+      if (origin) rfqs = rfqs.filter(r => r.origin.toLowerCase().includes(origin));
+      if (dest) rfqs = rfqs.filter(r => r.destination.toLowerCase().includes(dest));
+      if (date) rfqs = rfqs.filter(r => r.deadline >= date);
+
+      renderRFQs(rfqs);
+    }
+
+    // Load RFQs on page load
+    const allRFQs = JSON.parse(localStorage.getItem('lc-rfqs') || '[]');
+    renderRFQs(allRFQs);
+
+    // Set navigation based on role
+    const role = localStorage.getItem('lc-role');
+    if (role === '3pl') {
+      document.getElementById('myQuotesLink').style.display = 'inline';
+      document.getElementById('backToDashboard').href = 'provider-dashboard.html';
+    } else {
+      document.getElementById('myQuotesLink').style.display = 'none';
+      document.getElementById('backToDashboard').href = 'customer-dashboard.html';
+    }
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      try { localStorage.removeItem('lc-logged-in'); } catch(err) {}
+      window.location.href = 'index.html';
+    });
+  </script>
+</body>
+</html>

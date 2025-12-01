@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Đăng ký tài khoản khách hàng</title>
+  <style>
+    :root{--primary:#0b74da;--text:#0b2136;--muted:#6b7280;--border:rgba(15,23,42,0.1);--card:#ffffff;--ok:#10b981;--err:#ef4444;--input-h:48px;--accent:rgba(11,116,218,0.08)}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;background:linear-gradient(135deg,#f0f7ff,#f7fafc 40%,#eef4fb);color:var(--text)}
+    .wrap{max-width:760px;margin:40px auto;padding:20px}
+    .breadcrumb{display:inline-flex;align-items:center;gap:8px;color:#6b7280;text-decoration:none;font-weight:600}
+    .breadcrumb:hover{color:#374151}
+    .breadcrumb svg{width:18px;height:18px}
+    .card{background:var(--card);border:1px solid rgba(15,23,42,0.08);border-radius:16px;box-shadow:0 12px 36px rgba(11,116,218,0.12);padding:28px;max-width:640px;margin:0 auto}
+    h1{margin:0 0 12px;text-align:center;background:linear-gradient(135deg,var(--primary),#0b5cb8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .muted{color:var(--muted);text-align:center}
+    .group{margin-top:18px}
+    .group-title{font-weight:800;margin:0 0 8px;color:var(--primary);display:flex;align-items:center;gap:8px}
+    form{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .field label{display:block;font-weight:600;margin-bottom:6px}
+    .input{position:static}
+    .input-control{position:relative}
+    .input-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+    .input-icon svg{width:18px;height:18px}
+    .field input{width:100%;height:var(--input-h);padding:12px 14px 12px 48px;border-radius:10px;border:1px solid var(--border);font-size:15px;background:#fafcff;transition:all 0.2s}
+    .field input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(11,116,218,0.12);background:#fff}
+    .hint{font-size:12px;color:#6b7280;margin-top:6px;display:flex;align-items:center;gap:6px}
+    .hint svg{width:16px;height:16px}
+    .error{color:var(--err);font-size:13px;margin-top:4px}
+    .field input.valid{border-color:var(--ok)}
+    .field input.invalid{border-color:var(--err)}
+    .strength{display:flex;align-items:center;gap:10px;margin-top:6px}
+    .strength-bars{display:flex;gap:6px;flex:1}
+    .bar{flex:1;height:6px;border-radius:4px;background:#e5e7eb}
+    .strength.lvl-1 .bar:nth-child(1){background:#f59e0b}
+    .strength.lvl-2 .bar:nth-child(-n+2){background:#10b981}
+    .strength.lvl-3 .bar{background:#0b74da}
+    .terms{display:flex;align-items:flex-start;gap:10px;margin-top:6px}
+    .actions{margin-top:10px}
+    .btn{padding:12px 16px;border-radius:10px;border:1px solid var(--primary);background:linear-gradient(180deg,#0b84f0,#0b74da);color:#fff;font-weight:700;cursor:pointer;box-shadow:0 8px 24px rgba(11,116,218,0.25);transition:all 0.25s}
+    .btn:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 12px 32px rgba(11,116,218,0.35)}
+    .row-vertical{display:flex;flex-direction:column;gap:12px}
+    .otp-wrap{display:grid;grid-template-columns:1fr auto;align-items:end;gap:12px;margin-top:8px}
+    .btn-otp{height:var(--input-h);padding:0 16px;border-radius:10px;border:1px solid var(--primary);background:#fff;color:var(--primary);font-weight:700;cursor:pointer;transition:all 0.2s}
+    .btn-otp:hover{background:var(--primary);color:#fff}
+    .btn-otp[disabled]{opacity:0.6;cursor:not-allowed}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="breadcrumb" href="index.html" aria-label="Về Trang chủ">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/><path d="M21 12H9"/></svg>
+      <span>Về Trang chủ</span>
+    </a>
+    <div class="card">
+      <h1>Đăng ký tài khoản khách hàng</h1>
+      <p class="muted">Điền thông tin bên dưới để hoàn tất đăng ký.</p>
+      <form id="customerSignup">
+        <div class="group">
+          <div class="group-title">Thông tin cá nhân</div>
+          <div class="field input">
+            <label for="fullName">Họ và tên</label>
+            <div class="input-control">
+              <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-3-3.87M4 21v-2a4 4 0 013-3.87"/><circle cx="12" cy="7" r="4"/></svg></span>
+              <input id="fullName" name="fullName" type="text" placeholder="Nguyễn Văn A" required />
+            </div>
+            <div class="error" id="errFullName"></div>
+          </div>
+          <div class="field input">
+            <label for="contact">Email / Số điện thoại</label>
+            <div class="input-control">
+              <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M22 6l-10 7L2 6"/></svg></span>
+              <input id="contact" name="contact" type="text" placeholder="email@example.com hoặc 0912345678" required />
+            </div>
+            <div class="error" id="errContact"></div>
+          </div>
+          <div class="otp-wrap">
+            <div class="field input">
+              <label for="otp">Mã OTP</label>
+              <div class="input-control">
+                <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><path d="M5 12h14"/><path d="M19 21v-3"/><path d="M5 21v-3"/></svg></span>
+                <input id="otp" name="otp" type="text" placeholder="4–6 chữ số" />
+              </div>
+              <div class="error" id="errOtp"></div>
+            </div>
+            <button id="sendOtpBtn" type="button" class="btn-otp">Gửi OTP</button>
+          </div>
+          <div class="field input">
+            <label for="taxId">Mã số thuế (MST)</label>
+            <div class="input-control">
+              <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3z"/><path d="M7 7h10v4H7z"/></svg></span>
+              <input id="taxId" name="taxId" type="text" placeholder="10–13 chữ số" />
+            </div>
+            <div class="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span>Nếu bạn không có MST, hãy để trống. MST áp dụng cho doanh nghiệp.</span></div>
+            <div class="error" id="errTaxId"></div>
+          </div>
+        </div>
+        <div class="group">
+          <div class="group-title">Bảo mật</div>
+          <div class="row-vertical">
+            <div class="field input">
+              <label for="password">Mật khẩu</label>
+              <div class="input-control">
+                <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>
+                <input id="password" name="password" type="password" placeholder="Ít nhất 6 ký tự" minlength="6" required />
+              </div>
+              <div class="error" id="errPassword"></div>
+              <div class="strength" id="pwdStrength"><div class="strength-bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div><span id="pwdStrengthText" class="muted" style="text-align:left">Độ mạnh mật khẩu</span></div>
+            </div>
+            <div class="field input">
+              <label for="confirmPassword">Xác nhận mật khẩu</label>
+              <div class="input-control">
+                <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>
+                <input id="confirmPassword" name="confirmPassword" type="password" minlength="6" required />
+              </div>
+              <div class="error" id="errConfirm"></div>
+            </div>
+          </div>
+          <div class="terms">
+            <input id="terms" type="checkbox" required />
+            <label for="terms" style="color:var(--muted)">Tôi đồng ý với <a href="#" target="_blank" style="color:var(--primary);font-weight:700">điều khoản sử dụng</a>.</label>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn" type="submit">Hoàn tất đăng ký</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script>
+    const form = document.getElementById('customerSignup');
+    const fullName = document.getElementById('fullName');
+    const contact = document.getElementById('contact');
+    const otp = document.getElementById('otp');
+    const sendOtpBtn = document.getElementById('sendOtpBtn');
+    const taxId = document.getElementById('taxId');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirmPassword');
+    const strengthEl = document.getElementById('pwdStrength');
+    const strengthTextEl = document.getElementById('pwdStrengthText');
+
+    function isEmail(value){
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+    function isPhone(value){
+      return /^\+?\d{9,14}$/.test(value.replace(/\s|\-/g,''));
+    }
+    function isTaxId(value){
+      if(!value) return true; // optional
+      return /^\d{10,13}$/.test(value);
+    }
+    function isOtp(value){
+      return /^\d{4,6}$/.test(value);
+    }
+
+    function updateValidity(el, ok){
+      el.classList.remove('valid','invalid');
+      el.classList.add(ok ? 'valid' : 'invalid');
+    }
+
+    function passwordStrength(p){
+      let score = 0;
+      if(p.length >= 6) score++;
+      if(/[A-Z]/.test(p) && /[a-z]/.test(p)) score++;
+      if(/[0-9]/.test(p) || /[^A-Za-z0-9]/.test(p)) score++;
+      return Math.min(score,3);
+    }
+
+    function renderStrength(score){
+      strengthEl.classList.remove('lvl-1','lvl-2','lvl-3');
+      if(score <= 1){
+        strengthEl.classList.add('lvl-1');
+        strengthTextEl.textContent = 'Yếu';
+      } else if(score === 2){
+        strengthEl.classList.add('lvl-2');
+        strengthTextEl.textContent = 'Tốt';
+      } else {
+        strengthEl.classList.add('lvl-3');
+        strengthTextEl.textContent = 'Mạnh';
+      }
+    }
+
+    function clearErrors(){
+      ['errFullName','errContact','errOtp','errTaxId','errPassword','errConfirm'].forEach(id=>{
+        const el = document.getElementById(id);
+        if(el) el.textContent = '';
+      });
+    }
+
+    // Realtime validation
+    contact.addEventListener('input', ()=>{
+      const c = contact.value.trim();
+      const ok = (!!c && (isEmail(c) || isPhone(c)));
+      document.getElementById('errContact').textContent = ok ? '' : 'Nhập email hợp lệ hoặc số điện thoại (9–14 số)';
+      updateValidity(contact, ok);
+    });
+    otp.addEventListener('input', ()=>{
+      const o = otp.value.trim();
+      const ok = (!!o && isOtp(o));
+      document.getElementById('errOtp').textContent = ok ? '' : 'Mã OTP gồm 4–6 chữ số';
+      updateValidity(otp, ok);
+    });
+    password.addEventListener('input', ()=>{
+      const ok = password.value.length >= 6;
+      document.getElementById('errPassword').textContent = ok ? '' : 'Mật khẩu ít nhất 6 ký tự';
+      updateValidity(password, ok);
+      renderStrength(passwordStrength(password.value));
+    });
+    confirmPassword.addEventListener('input', ()=>{
+      const ok = (confirmPassword.value === password.value && confirmPassword.value.length >= 6);
+      document.getElementById('errConfirm').textContent = ok ? '' : 'Xác nhận mật khẩu không khớp';
+      updateValidity(confirmPassword, ok);
+    });
+    taxId.addEventListener('input', ()=>{
+      const t = taxId.value.trim();
+      const ok = isTaxId(t);
+      document.getElementById('errTaxId').textContent = ok ? '' : 'MST phải gồm 10–13 chữ số';
+      updateValidity(taxId, ok);
+    });
+
+    let otpSent = false;
+    sendOtpBtn.addEventListener('click', ()=>{
+      const c = contact.value.trim();
+      if(!c || !(isEmail(c) || isPhone(c))){
+        document.getElementById('errContact').textContent = 'Nhập email hợp lệ hoặc số điện thoại (9–14 số)';
+        updateValidity(contact, false);
+        return;
+      }
+      otpSent = true;
+      let remaining = 30;
+      sendOtpBtn.disabled = true;
+      sendOtpBtn.textContent = `Đã gửi (${remaining}s)`;
+      const timer = setInterval(()=>{
+        remaining--;
+        sendOtpBtn.textContent = `Đã gửi (${remaining}s)`;
+        if(remaining <= 0){
+          clearInterval(timer);
+          sendOtpBtn.disabled = false;
+          sendOtpBtn.textContent = 'Gửi OTP lại';
+        }
+      }, 1000);
+    });
+
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      clearErrors();
+      let ok = true;
+
+      if(!fullName.value.trim()){
+        document.getElementById('errFullName').textContent = 'Vui lòng nhập họ tên';
+        ok = false;
+      }
+      updateValidity(fullName, !!fullName.value.trim());
+
+      const c = contact.value.trim();
+      if(!c || !(isEmail(c) || isPhone(c))){
+        document.getElementById('errContact').textContent = 'Nhập email hợp lệ hoặc số điện thoại (9–14 số)';
+        ok = false;
+      }
+      updateValidity(contact, !!c && (isEmail(c) || isPhone(c)));
+
+      if(!otpSent){
+        document.getElementById('errOtp').textContent = 'Vui lòng nhấn Gửi OTP trước khi tiếp tục';
+        ok = false;
+      }
+      const o = otp.value.trim();
+      if(!isOtp(o)){
+        document.getElementById('errOtp').textContent = 'Mã OTP gồm 4–6 chữ số';
+        ok = false;
+      }
+      updateValidity(otp, isOtp(o));
+
+      const t = taxId.value.trim();
+      if(!isTaxId(t)){
+        document.getElementById('errTaxId').textContent = 'MST phải gồm 10–13 chữ số';
+        ok = false;
+      }
+      updateValidity(taxId, isTaxId(t));
+
+      if(password.value.length < 6){
+        document.getElementById('errPassword').textContent = 'Mật khẩu ít nhất 6 ký tự';
+        ok = false;
+      }
+      updateValidity(password, password.value.length >= 6);
+      renderStrength(passwordStrength(password.value));
+      if(confirmPassword.value !== password.value){
+        document.getElementById('errConfirm').textContent = 'Xác nhận mật khẩu không khớp';
+        ok = false;
+      }
+      updateValidity(confirmPassword, confirmPassword.value === password.value && confirmPassword.value.length >= 6);
+
+      if(!document.getElementById('terms').checked){
+        alert('Bạn cần đồng ý với điều khoản sử dụng');
+        ok = false;
+      }
+      if(!ok) return;
+
+      alert('Đăng ký thành công!');
+      try {
+        localStorage.setItem('lc-role','customer');
+        localStorage.setItem('lc-logged-in','1');
+        localStorage.setItem('lc-name', fullName.value.trim());
+        localStorage.setItem('lc-contact', contact.value.trim());
+        if(taxId.value.trim()) localStorage.setItem('lc-taxid', taxId.value.trim());
+      } catch(e) {}
+      window.location.href = 'customer-dashboard.html';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Đang chờ duyệt - 3PL Registration</title>
+  <style>
+    :root{--primary:#0b74da;--text:#0b2136;--muted:#6b7280;--card:#ffffff;--pending:#f59e0b;--success:#10b981;--error:#ef4444}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;background:linear-gradient(135deg,#f0f7ff,#f7fafc 40%,#eef4fb);color:var(--text);display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+    .container{max-width:600px;width:100%;background:var(--card);border-radius:20px;box-shadow:0 12px 48px rgba(11,116,218,0.15);padding:48px 40px;text-align:center}
+    .status-icon{width:80px;height:80px;margin:0 auto 24px;border-radius:50%;display:flex;align-items:center;justify-content:center;animation:pulse 2s infinite}
+    .status-icon svg{width:48px;height:48px}
+    .status-icon.pending{background:rgba(245,158,11,0.15);color:var(--pending)}
+    .status-icon.accepted{background:rgba(16,185,129,0.15);color:var(--success)}
+    .status-icon.rejected{background:rgba(239,68,68,0.15);color:var(--error)}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+    .status-title{font-size:28px;font-weight:800;margin:0 0 12px;background:linear-gradient(135deg,var(--primary),#0b5cb8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .status-message{font-size:16px;color:var(--muted);line-height:1.6;margin:0 0 32px}
+    .info-box{background:#f7fafc;border-radius:12px;padding:20px;margin-bottom:24px;text-align:left}
+    .info-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(15,23,42,0.06)}
+    .info-row:last-child{border-bottom:none}
+    .info-label{font-weight:600;color:var(--text)}
+    .info-value{color:var(--muted)}
+    .status-badge{display:inline-block;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:16px}
+    .status-badge.pending{background:rgba(245,158,11,0.15);color:var(--pending)}
+    .status-badge.accepted{background:rgba(16,185,129,0.15);color:var(--success)}
+    .status-badge.rejected{background:rgba(239,68,68,0.15);color:var(--error)}
+    .actions{display:flex;gap:12px;justify-content:center;margin-top:24px}
+    .btn{padding:12px 24px;border-radius:10px;font-weight:700;cursor:pointer;transition:all 0.25s;text-decoration:none;display:inline-block}
+    .btn-primary{background:linear-gradient(180deg,#0b84f0,#0b74da);color:#fff;border:1px solid var(--primary);box-shadow:0 8px 24px rgba(11,116,218,0.25)}
+    .btn-primary:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 12px 32px rgba(11,116,218,0.35)}
+    .btn-secondary{background:#fff;color:var(--text);border:1px solid rgba(15,23,42,0.1)}
+    .btn-secondary:hover{background:#f7fafc}
+    .note{font-size:13px;color:var(--muted);margin-top:24px;padding-top:24px;border-top:1px solid rgba(15,23,42,0.06)}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="status-icon pending" id="statusIcon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+    </div>
+    <div class="status-badge pending" id="statusBadge">Đang chờ duyệt</div>
+    <h1 class="status-title" id="statusTitle">Đăng ký thành công!</h1>
+    <p class="status-message" id="statusMessage">
+      Chúng tôi đã nhận được đơn đăng ký của bạn. Đội ngũ quản trị viên sẽ xem xét và phê duyệt trong vòng <strong>24-48 giờ</strong>. Bạn sẽ nhận được email thông báo khi đơn được xử lý.
+    </p>
+    
+    <div class="info-box">
+      <div class="info-row">
+        <span class="info-label">Tên công ty:</span>
+        <span class="info-value" id="infoCompany">-</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Mã số thuế:</span>
+        <span class="info-value" id="infoTaxId">-</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Ngày gửi:</span>
+        <span class="info-value" id="infoDate">-</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Trạng thái:</span>
+        <span class="info-value" id="infoStatus">Đang chờ duyệt</span>
+      </div>
+    </div>
+
+    <div class="actions" id="statusActions">
+      <a href="index.html" class="btn btn-secondary">Về Trang chủ</a>
+      <button class="btn btn-primary" onclick="checkStatus()">Kiểm tra trạng thái</button>
+    </div>
+
+    <div class="note">
+      <strong>Lưu ý:</strong> Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng tôi qua email <strong>support@logisticconnector.vn</strong>
+    </div>
+  </div>
+
+  <script>
+    // Get URL params for company info
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get('status') || 'pending';
+    const company = urlParams.get('company') || '-';
+    const taxId = urlParams.get('taxId') || '-';
+
+    // Set company info
+    document.getElementById('infoCompany').textContent = company;
+    document.getElementById('infoTaxId').textContent = taxId;
+    document.getElementById('infoDate').textContent = new Date().toLocaleDateString('vi-VN', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    // Update UI based on status
+    function updateStatus(currentStatus){
+      const icon = document.getElementById('statusIcon');
+      const badge = document.getElementById('statusBadge');
+      const title = document.getElementById('statusTitle');
+      const message = document.getElementById('statusMessage');
+      const statusText = document.getElementById('infoStatus');
+      const actions = document.getElementById('statusActions');
+
+      icon.className = 'status-icon ' + currentStatus;
+      badge.className = 'status-badge ' + currentStatus;
+
+      if(currentStatus === 'accepted'){
+        try{localStorage.setItem('lc-3pl-approved','1');localStorage.setItem('lc-role','3pl');localStorage.setItem('lc-logged-in','1');}catch(e){}
+        icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>';
+        badge.textContent = 'Đã duyệt';
+        title.textContent = 'Tài khoản đã được phê duyệt!';
+        message.innerHTML = 'Bạn có thể bắt đầu <strong>đăng tải dịch vụ, báo giá</strong> và <strong>tiếp nhận yêu cầu</strong> từ khách hàng.';
+        statusText.textContent = 'Đã duyệt';
+        actions.innerHTML = '<a href="index.html" class="btn btn-secondary">Về Trang chủ</a><a href="provider-dashboard.html" class="btn btn-primary">Đi đến Dashboard dịch vụ</a>';
+      } else if(currentStatus === 'rejected'){
+        icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6"/><path d="M9 9l6 6"/></svg>';
+        badge.textContent = 'Bị từ chối';
+        title.textContent = 'Hồ sơ bị từ chối';
+        message.innerHTML = '<strong>Lý do:</strong><br/>- Chưa cung cấp giấy tờ hợp lệ<br/>- Số điện thoại không liên lạc được<br/><br/>Vui lòng <strong>cập nhật lại thông tin</strong> để gửi duyệt lại.';
+        statusText.textContent = 'Bị từ chối';
+        actions.innerHTML = '<a href="signup-3pl.html" class="btn btn-primary">Cập nhật hồ sơ</a><a href="index.html" class="btn btn-secondary">Đăng xuất</a>';
+      } else {
+        // pending (default)
+        icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
+        badge.textContent = 'Đang chờ duyệt';
+        title.textContent = 'Đăng ký thành công!';
+        message.innerHTML = 'Chúng tôi đã nhận được đơn đăng ký của bạn. Đội ngũ quản trị viên sẽ xem xét và phê duyệt trong vòng <strong>24-48 giờ</strong>. Bạn sẽ nhận được email thông báo khi đơn được xử lý.';
+        statusText.textContent = 'Đang chờ duyệt';
+        actions.innerHTML = '<a href="index.html" class="btn btn-secondary">Về Trang chủ</a><button class="btn btn-primary" onclick="checkStatus()">Kiểm tra trạng thái</button>';
+      }
+    }
+
+    // Simulate status check (in real app, would call API)
+    function checkStatus(){
+      // Demo: cycle through statuses for demonstration
+      const statuses = ['pending', 'accepted', 'rejected'];
+      const currentIndex = statuses.indexOf(status);
+      const nextStatus = statuses[(currentIndex + 1) % statuses.length];
+      
+      // Update URL and reload (in production, would fetch from server)
+      const newUrl = new URL(window.location);
+      newUrl.searchParams.set('status', nextStatus);
+      window.location.href = newUrl.toString();
+    }
+
+    // Initialize with current status
+    updateStatus(status);
+  </script>
+</body>
+</html>

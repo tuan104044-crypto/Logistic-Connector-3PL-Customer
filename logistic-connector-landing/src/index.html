@@ -1,0 +1,1066 @@
+﻿<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Logistic Connector 3PL & Customer</title>
+  <meta name="description" content="Kết nối khách hàng với các bên 3PL  Logistic Connector 3PL & Customer" />
+  <style>
+    :root{
+      --primary:#0b74da;
+      --primary-hover:#085aa7;
+      --dark:#0b2136;
+      --muted:#6b7280;
+      --bg:#f7fafc;
+      --card:#ffffff;
+      --radius:10px;
+      --border-color:rgba(15,23,42,0.06);
+      --header-bg:linear-gradient(180deg,rgba(255,255,255,0.95),rgba(255,255,255,0.9));
+      --hero-card-bg:linear-gradient(145deg,#ffffff 0%,#f8fbff 100%);
+      --shadow-sm:0 2px 8px rgba(15,23,42,0.04);
+      --shadow-md:0 4px 16px rgba(15,23,42,0.08);
+      --shadow-lg:0 12px 32px rgba(15,23,42,0.12);
+      --shadow-xl:0 20px 48px rgba(15,23,42,0.15);
+    }
+    .dark{
+      --primary:#3b82f6;
+      --primary-hover:#2563eb;
+      --dark:#e5e7eb;
+      --muted:#9ca3af;
+      --bg:#0f172a;
+      --card:#1e293b;
+      --border-color:rgba(248,250,252,0.08);
+      --header-bg:linear-gradient(180deg,rgba(30,41,59,0.95),rgba(30,41,59,0.9));
+      --hero-card-bg:linear-gradient(145deg,#1e293b 0%,#1a2332 100%);
+      --shadow-sm:0 2px 8px rgba(0,0,0,0.2);
+      --shadow-md:0 4px 16px rgba(0,0,0,0.3);
+      --shadow-lg:0 12px 32px rgba(0,0,0,0.4);
+      --shadow-xl:0 20px 48px rgba(0,0,0,0.5);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    a{text-decoration:none;color:inherit}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+      background:var(--bg);
+      color:var(--dark);
+      -webkit-font-smoothing:antialiased;
+      transition:background-color 0.3s ease,color 0.3s ease;
+      line-height:1.6;
+    }
+    header{
+      background:var(--header-bg);
+      position:sticky;
+      top:0;
+      z-index:40;
+      backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--border-color);
+      box-shadow:var(--shadow-sm);
+    }
+    .container{
+      max-width:1100px;
+      margin:0 auto;
+      padding:14px 20px;
+      display:flex;
+      align-items:center;
+      gap:20px;
+      justify-content:space-between;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      text-decoration:none;
+      color:var(--dark);
+      transition:transform 0.2s ease;
+    }
+    .brand:hover{transform:scale(1.02)}
+    .logo{
+      width:48px;
+      height:48px;
+      display:inline-grid;
+      place-items:center;
+      background:transparent;
+      color:#fff;
+      border-radius:10px;
+      font-weight:700;
+      font-size:14px;
+    }
+    nav{display:flex;align-items:center;margin-left:auto}
+    .nav-row{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .nav-row a{
+      color:var(--dark);
+      text-decoration:none;
+      padding:8px 12px;
+      border-radius:8px;
+      font-weight:600;
+      font-size:14px;
+      transition:all 0.2s ease;
+      white-space:nowrap;
+    }
+    .nav-row a:hover{
+      background:rgba(11,116,218,0.08);
+      color:var(--primary);
+      transform:translateY(-1px);
+    }
+    .lang-switch{display:flex;gap:6px}
+    .lang-btn{
+      padding:6px 12px;
+      border-radius:6px;
+      border:1px solid var(--border-color);
+      background:transparent;
+      color:var(--dark);
+      cursor:pointer;
+      font-weight:700;
+      font-size:13px;
+      transition:all 0.2s ease;
+    }
+    .lang-btn:hover{background:rgba(11,116,218,0.08);transform:translateY(-1px)}
+    .lang-btn.active{
+      background:var(--primary);
+      color:#fff;
+      border-color:var(--primary);
+      box-shadow:var(--shadow-sm);
+    }
+    .btn{
+      padding:10px 18px;
+      border-radius:8px;
+      border:1px solid transparent;
+      font-weight:700;
+      cursor:pointer;
+      font-size:14px;
+      transition:all 0.25s ease;
+      white-space:nowrap;
+    }
+    .btn-primary{
+      background:linear-gradient(135deg,var(--primary),#3b82f6);
+      color:#fff;
+      border-color:var(--primary);
+      box-shadow:var(--shadow-md);
+    }
+    .btn-primary:hover{
+      transform:translateY(-2px);
+      box-shadow:var(--shadow-lg);
+    }
+    .btn-ghost{
+      background:transparent;
+      color:var(--dark);
+      border:1px solid var(--border-color);
+    }
+    .btn-ghost:hover{
+      background:rgba(11,116,218,0.05);
+      border-color:var(--primary);
+      transform:translateY(-1px);
+    }
+    .theme-toggle{
+      background:none;
+      border:none;
+      cursor:pointer;
+      padding:8px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:var(--dark);
+      transition:all 0.2s ease;
+    }
+    .theme-toggle:hover{
+      background:rgba(128,128,128,0.1);
+      transform:rotate(15deg);
+    }
+    .theme-toggle .icon{width:22px;height:22px}
+    .theme-toggle .sun-icon{display:none}
+    .dark .theme-toggle .sun-icon{display:block}
+    .dark .theme-toggle .moon-icon{display:none}
+    .hero{
+      max-width:1100px;
+      margin:48px auto;
+      padding:0 20px;
+      display:flex;
+      gap:28px;
+      align-items:stretch;
+    }
+    .hero-card{
+      flex:1;
+      background:var(--hero-card-bg);
+      padding:40px;
+      border-radius:20px;
+      box-shadow:var(--shadow-xl);
+      border:1px solid var(--border-color);
+      transition:all 0.3s ease;
+    }
+    .hero-card:hover{
+      transform:translateY(-4px);
+      box-shadow:0 24px 56px rgba(15,23,42,0.18);
+    }
+    .dark .hero-card:hover{box-shadow:0 24px 56px rgba(0,0,0,0.5)}
+    .hero h1{
+      margin:0 0 16px;
+      font-size:32px;
+      line-height:1.2;
+      font-weight:800;
+      letter-spacing:-0.5px;
+    }
+    .hero p{
+      margin:0 0 24px;
+      color:var(--muted);
+      font-size:16px;
+      line-height:1.6;
+    }
+    .cta{display:flex;gap:12px;flex-wrap:wrap}
+    .features{
+      display:flex;
+      gap:10px;
+      margin-top:24px;
+      flex-wrap:wrap;
+    }
+    .feature{
+      background:var(--card);
+      padding:10px 16px;
+      border-radius:20px;
+      border:1px solid var(--border-color);
+      font-size:13px;
+      font-weight:600;
+      transition:all 0.2s ease;
+      box-shadow:var(--shadow-sm);
+    }
+    .feature:hover{
+      transform:translateY(-2px);
+      box-shadow:var(--shadow-md);
+      border-color:var(--primary);
+    }
+    .trust-bar{max-width:1100px;margin:32px auto 0;padding:0 20px}
+    .trust-inner{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      gap:16px;
+      padding:24px;
+      background:var(--card);
+      border-radius:16px;
+      border:1px solid var(--border-color);
+      box-shadow:var(--shadow-sm);
+    }
+    .trust-text{
+      font-weight:700;
+      color:var(--dark);
+      font-size:16px;
+    }
+    .trust-logos{display:flex;flex-wrap:wrap;gap:10px}
+    .logo-pill{
+      padding:8px 16px;
+      border-radius:20px;
+      border:1px solid var(--border-color);
+      background:rgba(11,116,218,0.05);
+      color:var(--primary);
+      font-weight:600;
+      font-size:13px;
+      transition:all 0.2s ease;
+    }
+    .logo-pill:hover{
+      transform:translateY(-2px);
+      box-shadow:var(--shadow-sm);
+      background:rgba(11,116,218,0.1);
+    }
+    .benefits{max-width:1100px;margin:48px auto;padding:0 20px}
+    .benefits-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:20px;
+    }
+    .benefit-card{
+      background:var(--card);
+      border:1px solid var(--border-color);
+      border-radius:16px;
+      padding:24px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      box-shadow:var(--shadow-md);
+      transition:all 0.3s ease;
+    }
+    .benefit-card:hover{
+      transform:translateY(-4px);
+      box-shadow:var(--shadow-lg);
+      border-color:var(--primary);
+    }
+    .benefit-icon{
+      width:56px;
+      height:56px;
+      border-radius:12px;
+      background:linear-gradient(135deg,rgba(11,116,218,0.1),rgba(59,130,246,0.15));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transition:all 0.3s ease;
+    }
+    .benefit-card:hover .benefit-icon{
+      transform:scale(1.1) rotate(5deg);
+    }
+    .benefit-icon svg{width:28px;height:28px;fill:var(--primary)}
+    .benefit-title{
+      font-weight:700;
+      color:var(--dark);
+      font-size:18px;
+    }
+    .benefit-desc{
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.6;
+    }
+    footer{
+      max-width:1100px;
+      margin:48px auto;
+      padding:24px 20px;
+      color:var(--muted);
+      font-size:14px;
+      border-top:1px solid var(--border-color);
+    }
+    .support-widget{
+      position:fixed;
+      bottom:24px;
+      right:24px;
+      z-index:1000;
+    }
+    .support-toggle{
+      background:linear-gradient(135deg,var(--primary),#3b82f6);
+      color:#fff;
+      border:none;
+      border-radius:50%;
+      width:60px;
+      height:60px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:var(--shadow-xl);
+      transition:all 0.3s ease;
+    }
+    .support-toggle:hover{
+      transform:scale(1.1) rotate(90deg);
+      box-shadow:0 12px 40px rgba(11,116,218,0.5);
+    }
+    .support-panel{
+      position:absolute;
+      bottom:80px;
+      right:0;
+      width:320px;
+      background:var(--card);
+      border:1px solid var(--border-color);
+      border-radius:16px;
+      box-shadow:var(--shadow-xl);
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+      opacity:0;
+      pointer-events:none;
+      transform:translateY(20px) scale(0.95);
+      transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    .support-panel.open{
+      opacity:1;
+      pointer-events:auto;
+      transform:translateY(0) scale(1);
+    }
+    .support-header{
+      background:linear-gradient(135deg,var(--primary),#3b82f6);
+      color:#fff;
+      padding:14px 18px;
+      font-weight:700;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .support-header button{
+      background:transparent;
+      border:none;
+      color:#fff;
+      cursor:pointer;
+      font-size:20px;
+      line-height:1;
+      transition:transform 0.2s ease;
+    }
+    .support-header button:hover{transform:rotate(90deg)}
+    .support-body{
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .support-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .support-actions a{
+      flex:1;
+      text-align:center;
+      padding:10px 12px;
+      border-radius:8px;
+      background:rgba(11,116,218,0.08);
+      color:var(--primary);
+      font-weight:600;
+      font-size:13px;
+      transition:all 0.2s ease;
+    }
+    .support-actions a:hover{
+      background:rgba(11,116,218,0.15);
+      transform:translateY(-2px);
+    }
+    .support-messages{
+      max-height:180px;
+      overflow-y:auto;
+      border:1px solid var(--border-color);
+      border-radius:10px;
+      padding:10px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      background:var(--bg);
+    }
+    .support-msg{
+      background:var(--card);
+      border:1px solid var(--border-color);
+      padding:8px 10px;
+      border-radius:8px;
+      font-size:13px;
+      animation:slideIn 0.3s ease;
+    }
+    @keyframes slideIn{
+      from{opacity:0;transform:translateY(10px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+    .support-input-row{display:flex;gap:8px}
+    .support-input-row input{
+      flex:1;
+      padding:10px 12px;
+      border-radius:8px;
+      border:1px solid var(--border-color);
+      background:var(--card);
+      color:var(--dark);
+      font-size:13px;
+      transition:border-color 0.2s ease;
+    }
+    .support-input-row input:focus{
+      outline:none;
+      border-color:var(--primary);
+    }
+    .support-input-row button{
+      padding:10px 16px;
+      border-radius:8px;
+      border:1px solid var(--primary);
+      background:var(--primary);
+      color:#fff;
+      font-weight:600;
+      cursor:pointer;
+      font-size:13px;
+      transition:all 0.2s ease;
+    }
+    .support-input-row button:hover{
+      background:var(--primary-hover);
+      transform:translateY(-1px);
+    }
+    @media (max-width:920px){
+      .hero{flex-direction:column}
+      .nav-row{gap:8px}
+      .container{gap:12px}
+    }
+    @media (max-width:640px){
+      .hero h1{font-size:26px}
+      .hero-card{padding:28px 24px}
+      .support-panel{width:280px}
+      .nav-row a{font-size:13px;padding:6px 10px}
+    }
+    @media (max-width:480px){
+      .hero h1{font-size:22px}
+      .hero p{font-size:14px}
+      .cta{flex-direction:column}
+      .cta .btn{width:100%;text-align:center}
+    }
+    .login-modal-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.6);
+      backdrop-filter:blur(4px);
+      z-index:9999;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      opacity:0;
+      pointer-events:none;
+      transition:all 0.3s ease;
+    }
+    .login-modal-overlay.open{opacity:1;pointer-events:auto}
+    .login-modal{
+      background:var(--card);
+      border-radius:20px;
+      box-shadow:var(--shadow-xl);
+      width:90%;
+      max-width:460px;
+      padding:36px;
+      position:relative;
+      transform:scale(0.9);
+      transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    .login-modal-overlay.open .login-modal{transform:scale(1)}
+    .login-modal-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:28px;
+    }
+    .login-modal-title{
+      font-size:26px;
+      font-weight:800;
+      color:var(--dark);
+    }
+    .login-modal-close{
+      background:transparent;
+      border:none;
+      font-size:30px;
+      line-height:1;
+      color:var(--muted);
+      cursor:pointer;
+      padding:4px;
+      transition:all 0.2s ease;
+    }
+    .login-modal-close:hover{
+      color:var(--dark);
+      transform:rotate(90deg);
+    }
+    .login-form-group{margin-bottom:20px}
+    .login-form-label{
+      display:block;
+      font-weight:700;
+      color:var(--dark);
+      font-size:14px;
+      margin-bottom:8px;
+    }
+    .login-form-input{
+      width:100%;
+      padding:12px 16px;
+      border-radius:10px;
+      border:2px solid var(--border-color);
+      background:var(--bg);
+      color:var(--dark);
+      font-size:14px;
+      transition:all 0.2s ease;
+    }
+    .login-form-input:focus{
+      outline:none;
+      border-color:var(--primary);
+      background:var(--card);
+      box-shadow:0 0 0 3px rgba(11,116,218,0.1);
+    }
+    .login-form-input::placeholder{color:var(--muted);opacity:0.6}
+    .login-form-row{display:flex;gap:10px}
+    .login-form-row .login-form-group{flex:1;margin-bottom:0}
+    .login-contact-row{display:flex;gap:10px;align-items:flex-end}
+    .login-contact-row .login-form-group{flex:1}
+    .login-send-otp-btn{
+      padding:12px 18px;
+      border-radius:10px;
+      border:2px solid var(--primary);
+      background:transparent;
+      color:var(--primary);
+      font-weight:600;
+      font-size:14px;
+      cursor:pointer;
+      transition:all 0.25s ease;
+      white-space:nowrap;
+    }
+    .login-send-otp-btn:hover{
+      background:var(--primary);
+      color:#fff;
+      transform:translateY(-2px);
+      box-shadow:var(--shadow-md);
+    }
+    .login-send-otp-btn:disabled{opacity:0.5;cursor:not-allowed}
+    .login-submit-btn{
+      width:100%;
+      padding:14px;
+      border-radius:10px;
+      border:none;
+      background:linear-gradient(135deg,var(--primary),#3b82f6);
+      color:#fff;
+      font-weight:700;
+      font-size:16px;
+      cursor:pointer;
+      transition:all 0.3s ease;
+      box-shadow:var(--shadow-md);
+    }
+    .login-submit-btn:hover{
+      transform:translateY(-2px);
+      box-shadow:var(--shadow-lg);
+    }
+    .login-form-footer{
+      margin-top:20px;
+      text-align:center;
+      font-size:14px;
+      color:var(--muted);
+    }
+    .login-form-footer a{
+      color:var(--primary);
+      font-weight:600;
+      transition:color 0.2s ease;
+    }
+    .login-form-footer a:hover{
+      color:var(--primary-hover);
+    }
+    .role-modal-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.6);
+      backdrop-filter:blur(4px);
+      z-index:9999;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      opacity:0;
+      pointer-events:none;
+      transition:all 0.3s ease;
+    }
+    .role-modal-overlay.open{opacity:1;pointer-events:auto}
+    .role-modal{
+      background:var(--card);
+      border-radius:20px;
+      box-shadow:var(--shadow-xl);
+      width:92%;
+      max-width:540px;
+      padding:32px;
+      transform:scale(0.9);
+      transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    .role-modal-overlay.open .role-modal{transform:scale(1)}
+    .role-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:20px;
+    }
+    .role-title{
+      font-size:24px;
+      font-weight:800;
+      color:var(--dark);
+    }
+    .role-sub{
+      color:var(--muted);
+      font-size:15px;
+      margin-bottom:20px;
+    }
+    .role-close{
+      background:transparent;
+      border:none;
+      font-size:28px;
+      line-height:1;
+      color:var(--muted);
+      cursor:pointer;
+      padding:4px;
+      transition:all 0.2s ease;
+    }
+    .role-close:hover{
+      color:var(--dark);
+      transform:rotate(90deg);
+    }
+    .role-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+    }
+    .role-card{
+      border:2px solid var(--border-color);
+      border-radius:16px;
+      padding:20px;
+      cursor:pointer;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      background:var(--bg);
+      transition:all 0.25s ease;
+    }
+    .role-card:hover{
+      border-color:var(--primary);
+      transform:translateY(-4px);
+      box-shadow:var(--shadow-md);
+    }
+    .role-name{
+      font-weight:700;
+      color:var(--dark);
+      font-size:16px;
+    }
+    .role-desc{
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.5;
+    }
+    .role-actions{
+      margin-top:24px;
+      display:flex;
+      gap:12px;
+      justify-content:flex-end;
+    }
+    .role-btn{
+      padding:12px 20px;
+      border-radius:10px;
+      border:2px solid var(--border-color);
+      background:transparent;
+      color:var(--dark);
+      font-weight:600;
+      cursor:pointer;
+      transition:all 0.2s ease;
+    }
+    .role-btn:hover{
+      border-color:var(--primary);
+      transform:translateY(-1px);
+    }
+    .role-btn.primary{
+      border-color:var(--primary);
+      color:#fff;
+      background:linear-gradient(135deg,var(--primary),#3b82f6);
+      box-shadow:var(--shadow-md);
+    }
+    .role-btn.primary:hover{
+      transform:translateY(-2px);
+      box-shadow:var(--shadow-lg);
+    }
+    .notice-banner{max-width:1100px;margin:16px auto 0;padding:0 20px}
+    .notice{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      background:linear-gradient(135deg,rgba(11,116,218,0.08),rgba(59,130,246,0.1));
+      border:1px solid var(--border-color);
+      border-left:4px solid var(--primary);
+      border-radius:12px;
+      padding:14px 18px;
+      color:var(--dark);
+      box-shadow:var(--shadow-sm);
+      animation:slideDown 0.4s ease;
+    }
+    @keyframes slideDown{
+      from{opacity:0;transform:translateY(-20px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+    .notice strong{color:var(--primary);font-weight:700}
+    .notice-actions{display:flex;gap:10px}
+    .notice a{
+      color:#fff;
+      background:var(--primary);
+      border:1px solid var(--primary);
+      padding:8px 14px;
+      border-radius:8px;
+      font-weight:700;
+      font-size:13px;
+      transition:all 0.2s ease;
+    }
+    .notice a:hover{
+      background:var(--primary-hover);
+      transform:translateY(-1px);
+    }
+    .notice button{
+      background:transparent;
+      border:1px solid var(--border-color);
+      padding:8px 12px;
+      border-radius:8px;
+      font-weight:700;
+      color:var(--dark);
+      cursor:pointer;
+      transition:all 0.2s ease;
+    }
+    .notice button:hover{
+      background:rgba(0,0,0,0.05);
+      transform:translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a class="brand" href="#">
+        <div class="logo" aria-hidden="true" style="background:transparent;box-shadow:none;padding:0;">
+          <svg width="48" height="48" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo Logistic Connector">
+            <defs>
+              <linearGradient id="ringGradMini" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#0fa3b1"/>
+                <stop offset="50%" stop-color="#0aa0a8"/>
+                <stop offset="100%" stop-color="#06606a"/>
+              </linearGradient>
+              <radialGradient id="centerGradMini" cx="50%" cy="45%" r="50%">
+                <stop offset="0%" stop-color="#ffd07a"/>
+                <stop offset="45%" stop-color="#ff9b2e"/>
+                <stop offset="100%" stop-color="#ff7a00" stop-opacity="0.95"/>
+              </radialGradient>
+            </defs>
+            <circle cx="512" cy="512" r="360" fill="none" stroke="url(#ringGradMini)" stroke-width="70"/>
+            <circle cx="512" cy="512" r="300" fill="none" stroke="#17bfc6" stroke-width="50" opacity="0.95"/>
+            <circle cx="512" cy="512" r="240" fill="none" stroke="#1fd3d5" stroke-width="30" opacity="0.9"/>
+            <circle cx="512" cy="512" r="196" fill="url(#centerGradMini)"/>
+            <text x="50%" y="57%" text-anchor="middle" font-family="Poppins, Montserrat, 'Helvetica Neue', Arial, sans-serif" font-weight="800" font-size="340" fill="#8b3d00" style="mix-blend-mode:screen">TTV</text>
+          </svg>
+        </div>
+        <div>
+          <div style="font-weight:800" data-translate-key="brandName">Logistic Connector</div>
+          <div style="font-size:12px;color:var(--muted)" data-translate-key="brandSlogan">3PL & Customer</div>
+        </div>
+      </a>
+      <nav>
+        <div class="nav-row" role="navigation" aria-label="Main">
+          <a href="#" data-translate-key="navHome">Trang Chủ</a>
+          <a href="#" data-translate-key="navNews">Tin tức</a>
+          <a href="#" data-translate-key="navServices">Dịch vụ</a>
+          <div class="lang-switch">
+            <button class="lang-btn" data-lang="vi" aria-label="Tiếng Việt">VI</button>
+            <button class="lang-btn" data-lang="en" aria-label="English">EN</button>
+          </div>
+          <a href="#" class="btn btn-ghost" id="registerBtn" data-translate-key="authRegister">Đăng kí</a>
+          <a href="#" class="btn btn-ghost" id="loginBtn" data-translate-key="authLogin">Đăng nhập</a>
+          <a href="account-settings.html" class="btn btn-ghost" id="accountNav" style="display:none">Tài khoản</a>
+          <a href="#" class="btn btn-ghost" id="logoutNav" style="display:none">Đăng xuất</a>
+          <button class="theme-toggle" id="theme-toggle" title="Chuyển đổi chế độ sáng/tối">
+            <svg class="icon sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.106a.75.75 0 010 1.06l-1.591 1.59a.75.75 0 11-1.06-1.06l1.59-1.59a.75.75 0 011.06 0zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5h2.25a.75.75 0 01.75.75zM17.836 17.836a.75.75 0 01-1.06 0l-1.59-1.591a.75.75 0 111.06-1.06l1.59 1.59a.75.75 0 010 1.061zM12 18a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.836a.75.75 0 010-1.06l-1.59-1.59a.75.75 0 01-1.061 1.06l1.59 1.59a.75.75 0 011.06 0zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.106 6.106a.75.75 0 011.06 0l1.591 1.59a.75.75 0 11-1.06 1.06l-1.59-1.59a.75.75 0 010-1.06z"></path></svg>
+            <svg class="icon moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 004.463-.69a.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.7-10.5-10.5 0-3.568 1.75-6.755 4.463-8.61a.75.75 0 01.819.162z" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <div class="notice-banner" id="noticeBanner" style="display:none">
+    <div class="notice" role="status" aria-live="polite">
+      <div id="noticeText">Thông báo</div>
+      <div class="notice-actions">
+        <a href="#" id="noticeLink">Xem</a>
+        <button id="noticeDismiss">Đã hiểu</button>
+      </div>
+    </div>
+  </div>
+  <main>
+    <section class="hero">
+      <div class="hero-card">
+        <h1 data-translate-key="heroTitle">Quản lý vận chuyển toàn diện  Tối ưu chi phí, theo dõi thời gian thực</h1>
+        <p data-translate-key="heroSubtitle">Kết nối đội xe, kho và đối tác vận chuyển trong một nền tảng duy nhất. Tự động tối ưu tuyến, giám sát POD, và đối soát nhanh  triển khai trong vài ngày.</p>
+        <div class="cta">
+          <a href="#" class="btn btn-primary" data-translate-key="ctaPrimary">Đặt lịch demo miễn phí  15 phút</a>
+          <a href="#" class="btn btn-ghost" data-translate-key="ctaSecondary">Nhận báo giá ngay</a>
+        </div>
+        <div class="features" aria-hidden="false">
+          <div class="feature" data-translate-key="featureSearch">Theo dõi thời gian thực & POD</div>
+          <div class="feature" data-translate-key="featureOptimize">Tối ưu tuyến & ghép hàng tự động</div>
+          <div class="feature" data-translate-key="featureCod">Hỗ trợ COD & KYC linh hoạt</div>
+          <div class="feature" data-translate-key="featureReconcile">Đối soát & báo cáo tự động</div>
+        </div>
+      </div>
+    </section>
+    <section class="trust-bar">
+      <div class="trust-inner">
+        <div class="trust-text" data-translate-key="trustText">Đang phục vụ 1,800+ khách hàng  98% on-time delivery  50k shipments/tháng</div>
+        <div class="trust-logos" aria-label="Khách hàng tiêu biểu">
+          <div class="logo-pill">FastShip</div>
+          <div class="logo-pill">MegaLog</div>
+          <div class="logo-pill">SkyExpress</div>
+          <div class="logo-pill">InlandPro</div>
+          <div class="logo-pill">DeltaTrans</div>
+        </div>
+      </div>
+    </section>
+    <section class="benefits">
+      <div class="benefits-grid">
+        <article class="benefit-card"><div class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 2a8 8 0 018 8c0 .46-.04.9-.12 1.34l-3.5-3.5a2.5 2.5 0 00-3.54 0l-3.86 3.86a2.5 2.5 0 000 3.54l1.8 1.8A8 8 0 0112 4z"/></svg></div><div class="benefit-title" data-translate-key="benefitTitle1">Theo dõi thời gian thực & POD</div><div class="benefit-desc" data-translate-key="benefitDesc1">Vị trí chính xác, snap-to-road, cập nhật ETA, ảnh/chữ ký POD kèm GPS.</div></article>
+        <article class="benefit-card"><div class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 4h16v6H4V4zm0 8h6v8H4v-8zm8 0h8v8h-8v-8z"/></svg></div><div class="benefit-title" data-translate-key="benefitTitle2">Tối ưu tuyến & ghép hàng tự động</div><div class="benefit-desc" data-translate-key="benefitDesc2">Giảm chi phí vận hành bằng thuật toán tối ưu tuyến & ghép lô (LTL/FTL).</div></article>
+        <article class="benefit-card"><div class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 3a2 2 0 00-2 2v14l3-2 3 2 3-2 3 2 3-2 3 2V5a2 2 0 00-2-2H5zm2 5h10v2H7V8zm0 4v2h6v-2H7z"/></svg></div><div class="benefit-title" data-translate-key="benefitTitle3">Hỗ trợ COD & KYC linh hoạt</div><div class="benefit-desc" data-translate-key="benefitDesc3">Luồng KYC tự động cho đơn COD lớn; quy trình an toàn, giảm rủi ro.</div></article>
+        <article class="benefit-card"><div class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 012-2h12a2 2 0 012 2v14l-4-2-4 2-4-2-4 2V5zm4 2v2h8V7H8zm0 4v2h5v-2H8z"/></svg></div><div class="benefit-title" data-translate-key="benefitTitle4">Đối soát & báo cáo tự động</div><div class="benefit-desc" data-translate-key="benefitDesc4">Statement/Invoice tự động, reconciliation file (CSV/XLSX) cho finance.</div></article>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div style="display:flex;justify-content:space-between;align-items:center;max-width:1100px;margin:0 auto;padding:10px 20px">
+      <div data-translate-key="footerCopyright"> <strong>Logistic Connector</strong>  Kết nối 3PL & khách hàng</div>
+      <div style="display:flex;gap:12px;align-items:center"><div style="color:var(--muted)" data-translate-key="footerContact">Liên hệ: info@example.com</div></div>
+    </div>
+  </footer>
+  <div class="login-modal-overlay" id="loginModal">
+    <div class="login-modal">
+      <div class="login-modal-header">
+        <h2 class="login-modal-title" data-translate-key="loginModalTitle">Đăng nhập</h2>
+        <button class="login-modal-close" id="loginModalClose" aria-label="Đóng">×</button>
+      </div>
+      <form id="loginForm">
+        <div class="login-form-group">
+          <label class="login-form-label">Vai trò</label>
+          <select id="loginRole" class="login-form-input" aria-label="Chọn vai trò">
+            <option value="3pl">Nhà cung cấp 3PL</option>
+            <option value="customer">Khách hàng</option>
+          </select>
+        </div>
+        <div class="login-form-group">
+          <label class="login-form-label" data-translate-key="loginUsername">Tên đăng nhập</label>
+          <input type="text" class="login-form-input" placeholder="Nhập tên đăng nhập" data-translate-placeholder="loginUsernamePlaceholder" required />
+        </div>
+        <div class="login-contact-row">
+          <div class="login-form-group">
+            <label class="login-form-label" data-translate-key="loginContact">Email hoặc Số điện thoại</label>
+            <input type="text" id="contactInput" class="login-form-input" placeholder="email@example.com hoặc 0912345678" data-translate-placeholder="loginContactPlaceholder" required />
+          </div>
+          <button type="button" id="sendOtpBtn" class="login-send-otp-btn" data-translate-key="loginSendOtp">Gửi OTP</button>
+        </div>
+        <div class="login-form-group">
+          <label class="login-form-label" data-translate-key="loginPassword">Mật khẩu</label>
+          <input type="password" class="login-form-input" placeholder="Nhập mật khẩu" data-translate-placeholder="loginPasswordPlaceholder" required />
+        </div>
+        <div class="login-form-group">
+          <label class="login-form-label" data-translate-key="loginOtp">Mã OTP xác thực</label>
+          <input type="text" id="otpInput" class="login-form-input" placeholder="Nhập mã OTP 6 chữ số" data-translate-placeholder="loginOtpPlaceholder" maxlength="6" pattern="[0-9]{6}" required />
+        </div>
+        <button type="submit" class="login-submit-btn" data-translate-key="loginSubmit">Đăng nhập</button>
+        <div class="login-form-footer">
+          <span data-translate-key="loginFooter">Chưa có tài khoản?</span> <a href="#" data-translate-key="loginRegisterLink">Đăng ký ngay</a>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="role-modal-overlay" id="roleModal">
+    <div class="role-modal">
+      <div class="role-header">
+        <h2 class="role-title" data-translate-key="roleSelectTitle">Hãy cho chúng tôi biết bạn là ai</h2>
+        <button class="role-close" id="roleClose" aria-label="Đóng">×</button>
+      </div>
+      <div class="role-sub" data-translate-key="roleSelectSubtitle">Nhà cung cấp 3PL hay Khách hàng?</div>
+      <div class="role-grid">
+        <button class="role-card" id="role3pl" data-role="3pl">
+          <span class="role-name" data-translate-key="role3pl">Nhà cung cấp 3PL</span>
+          <span class="role-desc" data-translate-key="role3plDesc">Quản lý đội xe, kho, đơn hàng và đối soát.</span>
+        </button>
+        <button class="role-card" id="roleCustomer" data-role="customer">
+          <span class="role-name" data-translate-key="roleCustomer">Khách hàng</span>
+          <span class="role-desc" data-translate-key="roleCustomerDesc">Tạo đơn, theo dõi giao hàng, nhận báo cáo.</span>
+        </button>
+      </div>
+      <div class="role-actions">
+        <button class="role-btn" id="roleCancel" data-translate-key="roleCancel">Hủy</button>
+        <button class="role-btn primary" id="roleProceed" disabled data-translate-key="roleProceed">Tiếp tục</button>
+      </div>
+    </div>
+  </div>
+  <div class="support-widget" id="supportWidget">
+    <button class="support-toggle" id="supportToggle" aria-label="Hỗ trợ khách hàng"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a10 10 0 0 0-10 10v3a3 3 0 0 0 3 3h1a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H5a8 8 0 0 1 16 0v3a8 8 0 0 1-8 8h-1"/><path d="M10 22h2"/></svg></button>
+    <div class="support-panel" id="supportPanel" aria-live="polite">
+      <div class="support-header"><span data-translate-key="supportTitle">Hỗ trợ khách hàng</span><button id="supportClose" aria-label="Đóng"></button></div>
+      <div class="support-body">
+        <div class="support-actions"><a href="tel:+84000000000" data-translate-key="supportCall">Gọi ngay</a><a href="#" id="openMessageTab" data-translate-key="supportMessage">Nhắn tin</a></div>
+        <div class="support-messages" id="supportMessages" data-translate-key="supportEmpty">Chưa có tin nhắn</div>
+        <div class="support-input-row"><input id="supportInput" type="text" maxlength="240" placeholder="Tin nhắn..." data-translate-key="supportPlaceholder" /><button id="supportSend" data-translate-key="supportSend">Gửi</button></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const translations={vi:{brandName:'Logistic Connector',brandSlogan:'3PL &amp; Customer',navHome:'Trang Chủ',navNews:'Tin tức',navServices:'Dịch vụ',authRegister:'Đăng kí',authLogin:'Đăng nhập',heroTitle:'Quản lý vận chuyển toàn diện  Tối ưu chi phí, theo dõi thời gian thực',heroSubtitle:'Kết nối đội xe, kho và đối tác vận chuyển trong một nền tảng duy nhất. Tự động tối ưu tuyến, giám sát POD, và đối soát nhanh  triển khai trong vài ngày.',ctaPrimary:'Đặt lịch demo miễn phí  15 phút',ctaSecondary:'Nhận báo giá ngay',featureSearch:'Theo dõi thời gian thực & POD',featureOptimize:'Tối ưu tuyến & ghép hàng tự động',featureCod:'Hỗ trợ COD & KYC linh hoạt',featureReconcile:'Đối soát & báo cáo tự động',trustText:'Đang phục vụ 1,800+ khách hàng  98% on-time delivery  50k shipments/tháng',benefitTitle1:'Theo dõi thời gian thực & POD',benefitDesc1:'Vị trí chính xác, snap-to-road, cập nhật ETA, ảnh/chữ ký POD kèm GPS.',benefitTitle2:'Tối ưu tuyến & ghép hàng tự động',benefitDesc2:'Giảm chi phí vận hành bằng thuật toán tối ưu tuyến & ghép lô (LTL/FTL).',benefitTitle3:'Hỗ trợ COD & KYC linh hoạt',benefitDesc3:'Luồng KYC tự động cho đơn COD lớn; quy trình an toàn, giảm rủi ro.',benefitTitle4:'Đối soát & báo cáo tự động',benefitDesc4:'Statement/Invoice tự động, reconciliation file (CSV/XLSX) cho finance.',supportTitle:'Hỗ trợ khách hàng',supportCall:'Gọi ngay',supportMessage:'Nhắn tin',supportEmpty:'Chưa có tin nhắn',supportPlaceholder:'Tin nhắn...',supportSend:'Gửi',footerCopyright:' <strong>Logistic Connector</strong>  Kết nối 3PL &amp; khách hàng',footerContact:'Liên hệ: info@example.com',loginModalTitle:'Đăng nhập',loginUsername:'Tên đăng nhập',loginUsernamePlaceholder:'Nhập tên đăng nhập',loginContact:'Email hoặc Số điện thoại',loginContactPlaceholder:'email@example.com hoặc 0912345678',loginPassword:'Mật khẩu',loginPasswordPlaceholder:'Nhập mật khẩu',loginSendOtp:'Gửi OTP',loginOtp:'Mã OTP xác thực',loginOtpPlaceholder:'Nhập mã OTP 6 chữ số',loginSubmit:'Đăng nhập',loginFooter:'Chưa có tài khoản?',loginRegisterLink:'Đăng ký ngay',roleSelectTitle:'Hãy cho chúng tôi biết bạn là ai',roleSelectSubtitle:'Nhà cung cấp 3PL hay Khách hàng?',role3pl:'Nhà cung cấp 3PL',role3plDesc:'Quản lý đội xe, kho, đơn hàng và đối soát.',roleCustomer:'Khách hàng',roleCustomerDesc:'Tạo đơn, theo dõi giao hàng, nhận báo cáo.',roleCancel:'Hủy',roleProceed:'Tiếp tục'},en:{brandName:'Logistic Connector',brandSlogan:'3PL &amp; Customer',navHome:'Home',navNews:'News',navServices:'Services',authRegister:'Sign Up',authLogin:'Log In',heroTitle:'Comprehensive transport management  optimize costs with real-time tracking',heroSubtitle:'Connect fleet, warehouses, and carrier partners in one platform. Auto route optimization, POD monitoring, and rapid reconciliation  live in days.',ctaPrimary:'Book a free 15-minute demo',ctaSecondary:'Request a quote now',featureSearch:'Real-time tracking & POD',featureOptimize:'Auto route & load optimization',featureCod:'Flexible COD & KYC workflows',featureReconcile:'Automated reconciliation & reports',trustText:'Serving 1,800+ customers  98% on-time delivery  50k shipments/month',benefitTitle1:'Real-time tracking & POD',benefitDesc1:'Precise locations, snap-to-road, live ETA updates, POD photos/signatures with GPS.',benefitTitle2:'Auto route & load optimization',benefitDesc2:'Cut operating costs with route optimization and smart load consolidation (LTL/FTL).',benefitTitle3:'Flexible COD & KYC workflows',benefitDesc3:'Automated KYC for high-value COD orders; secure processes that mitigate risk.',benefitTitle4:'Automated reconciliation & reports',benefitDesc4:'Auto statements/invoices plus reconciliation files (CSV/XLSX) ready for finance.',supportTitle:'Customer Support',supportCall:'Call Now',supportMessage:'Message',supportEmpty:'No messages yet',supportPlaceholder:'Your message...',supportSend:'Send',footerCopyright:' <strong>Logistic Connector</strong>  Connecting 3PLs &amp; shippers',footerContact:'Contact: info@example.com',loginModalTitle:'Log In',loginUsername:'Username',loginUsernamePlaceholder:'Enter username',loginContact:'Email or Phone',loginContactPlaceholder:'email@example.com or phone number',loginPassword:'Password',loginPasswordPlaceholder:'Enter password',loginSendOtp:'Send OTP',loginOtp:'OTP Verification Code',loginOtpPlaceholder:'Enter 6-digit OTP',loginSubmit:'Log In',loginFooter:'Don\'t have an account?',loginRegisterLink:'Sign up now',roleSelectTitle:'Tell us who you are',roleSelectSubtitle:'3PL Provider or Customer?',role3pl:'3PL Provider',role3plDesc:'Manage fleet, warehouses, orders, and reconciliation.',roleCustomer:'Customer',roleCustomerDesc:'Create orders, track deliveries, receive reports.',roleCancel:'Cancel',roleProceed:'Continue'}};
+    (function(){const storageKey='lc-lang';const btns=document.querySelectorAll('.lang-btn');function resolve(){const saved=localStorage.getItem(storageKey);if(saved&&translations[saved])return saved;const doc=document.documentElement.lang?.toLowerCase();if(doc&&translations[doc])return doc;return'vi'}function apply(lang){const dict=translations[lang];if(!dict)return;document.documentElement.setAttribute('lang',lang);document.querySelectorAll('[data-translate-key]').forEach(n=>{const k=n.getAttribute('data-translate-key');if(dict[k])n.innerHTML=dict[k];});}function active(lang){btns.forEach(b=>b.classList.toggle('active',b.getAttribute('data-lang')===lang));}const initial=resolve();apply(initial);active(initial);btns.forEach(b=>b.addEventListener('click',()=>{const l=b.getAttribute('data-lang');if(!translations[l])return;localStorage.setItem(storageKey,l);apply(l);active(l);}));})();
+    (function(){const t=document.getElementById('theme-toggle');const body=document.body;const key='lc-theme';const mq=window.matchMedia('(prefers-color-scheme: dark)');function apply(v){v==='dark'?body.classList.add('dark'):body.classList.remove('dark');localStorage.setItem(key,v);}t&&t.addEventListener('click',()=>{apply(body.classList.contains('dark')?'light':'dark');});const saved=localStorage.getItem(key);if(saved){apply(saved);}else if(mq.matches){apply('dark');}mq.addEventListener('change',e=>{if(!localStorage.getItem(key))apply(e.matches?'dark':'light');});
+      // Auth-aware header
+      function applyAuthUI(){
+        const logged = localStorage.getItem('lc-logged-in')==='1';
+        const role = localStorage.getItem('lc-role');
+        const registerBtn=document.getElementById('registerBtn');
+        const loginBtn=document.getElementById('loginBtn');
+        const accountNav=document.getElementById('accountNav');
+        const logoutNav=document.getElementById('logoutNav');
+        const servicesLink=document.querySelector('a[data-translate-key="navServices"]');
+        if(!registerBtn||!loginBtn||!accountNav||!logoutNav) return;
+        if(logged && (role==='3pl'||role==='customer')){
+          registerBtn.style.display='none';
+          loginBtn.style.display='none';
+          accountNav.style.display='inline-flex';
+          logoutNav.style.display='inline-flex';
+          if(servicesLink){ servicesLink.href = role==='3pl' ? 'provider-dashboard.html' : 'customer-dashboard.html'; }
+        } else {
+          registerBtn.style.display='inline-flex';
+          loginBtn.style.display='inline-flex';
+          accountNav.style.display='none';
+          logoutNav.style.display='none';
+          if(servicesLink){ servicesLink.href = '#'; }
+        }
+        // CTA tweak
+        const ctaPrimary = document.querySelector('.cta a.btn.btn-primary');
+        if(ctaPrimary){
+          if(logged && (role==='3pl'||role==='customer')){
+            ctaPrimary.textContent = 'Mở Dịch vụ';
+            ctaPrimary.href = role==='3pl' ? 'provider-dashboard.html' : 'customer-dashboard.html';
+          } else {
+            ctaPrimary.textContent = document.documentElement.lang==='en' ? 'Book a free 15-minute demo' : 'Đặt lịch demo miễn phí  15 phút';
+            ctaPrimary.href = '#';
+          }
+        }
+      }
+      applyAuthUI();
+      const logoutNav=document.getElementById('logoutNav');
+      logoutNav&&logoutNav.addEventListener('click',e=>{e.preventDefault();try{localStorage.removeItem('lc-logged-in');}catch(err){};location.reload();});
+    })();
+    // Role-aware notification banner
+    (function(){
+      const wrap = document.getElementById('noticeBanner');
+      const text = document.getElementById('noticeText');
+      const link = document.getElementById('noticeLink');
+      const dismiss = document.getElementById('noticeDismiss');
+      if(!wrap||!text||!link||!dismiss) return;
+      const logged = localStorage.getItem('lc-logged-in')==='1';
+      const role = localStorage.getItem('lc-role');
+      if(!logged || !(role==='3pl' || role==='customer')){ wrap.style.display='none'; return; }
+
+      function safeParse(key){ try { return JSON.parse(localStorage.getItem(key)||'[]'); } catch(e){ return []; } }
+      let show=false; let message=''; let href='#'; let onDismiss = ()=>{};
+
+      if(role==='customer'){
+        const myRFQs = safeParse('lc-my-rfqs');
+        const quotes = safeParse('lc-quotes');
+        const rfqIds = new Set(myRFQs.map(r=>r.id));
+        const totalMyQuotes = quotes.filter(q=> q && rfqIds.has(q.rfqId)).length;
+        const seenKey='lc-seen-quote-total';
+        const seen = parseInt(localStorage.getItem(seenKey)||'0',10) || 0;
+        const delta = Math.max(totalMyQuotes - seen, 0);
+        if(delta>0){
+          show=true; message = `Bạn có ${delta} báo giá mới cho RFQ của bạn`;
+          href='customer-dashboard.html';
+          onDismiss=()=>{ localStorage.setItem(seenKey, String(totalMyQuotes)); };
+        }
+      } else if(role==='3pl'){
+        const rfqs = safeParse('lc-rfqs');
+        let services=[]; try{ services = JSON.parse(localStorage.getItem('lc-3pl-services')||'[]'); }catch(e){ services=[]; }
+        const eligible = services && services.length ? rfqs.filter(r=> services.includes(r.service)) : rfqs;
+        const count = eligible.length;
+        const seenKey='lc-seen-market-rfqs';
+        const seen = parseInt(localStorage.getItem(seenKey)||'0',10) || 0;
+        const delta = Math.max(count - seen, 0);
+        if(delta>0){
+          show=true; message = `Có ${delta} RFQ mới phù hợp dịch vụ của bạn`;
+          href='marketplace.html';
+          onDismiss=()=>{ localStorage.setItem(seenKey, String(count)); };
+        }
+      }
+      if(show){
+        text.textContent = message;
+        link.setAttribute('href', href);
+        wrap.style.display='block';
+        dismiss.addEventListener('click', ()=>{ onDismiss(); wrap.style.display='none'; });
+      } else {
+        wrap.style.display='none';
+      }
+    })();
+    (function(){const panel=document.getElementById('supportPanel');const toggle=document.getElementById('supportToggle');const closeBtn=document.getElementById('supportClose');const send=document.getElementById('supportSend');const input=document.getElementById('supportInput');const list=document.getElementById('supportMessages');const key='lc-support-msgs';let msgs=[];function load(){try{msgs=JSON.parse(localStorage.getItem(key)||'[]');}catch(e){msgs=[];}render();}function save(){localStorage.setItem(key,JSON.stringify(msgs.slice(-50)));}function render(){if(!msgs.length){list.innerHTML=translations[document.documentElement.lang]?.supportEmpty||'No messages yet';return;}list.innerHTML='';msgs.forEach(m=>{const d=document.createElement('div');d.className='support-msg';d.textContent=m.text;list.appendChild(d);});list.scrollTop=list.scrollHeight;}function sendMsg(){const v=input.value.trim();if(!v)return;msgs.push({text:v,ts:Date.now()});input.value='';save();render();}toggle.addEventListener('click',()=>panel.classList.toggle('open'));closeBtn.addEventListener('click',()=>panel.classList.remove('open'));send.addEventListener('click',sendMsg);input.addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg();});new MutationObserver(()=>render()).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});load();})();
+    (function(){const modal=document.getElementById('loginModal');const loginBtn=document.getElementById('loginBtn');const closeBtn=document.getElementById('loginModalClose');const sendOtpBtn=document.getElementById('sendOtpBtn');const contactInput=document.getElementById('contactInput');const otpInput=document.getElementById('otpInput');const form=document.getElementById('loginForm');const roleSelect=document.getElementById('loginRole');let otpSent=false;function applyPlaceholders(){const lang=document.documentElement.lang;const dict=translations[lang];document.querySelectorAll('[data-translate-placeholder]').forEach(el=>{const k=el.getAttribute('data-translate-placeholder');if(dict&&dict[k])el.placeholder=dict[k];});}loginBtn.addEventListener('click',e=>{e.preventDefault();modal.classList.add('open');});closeBtn.addEventListener('click',()=>modal.classList.remove('open'));modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open');});sendOtpBtn.addEventListener('click',()=>{const contact=contactInput.value.trim();if(!contact){alert('Vui lòng nhập email hoặc số điện thoại');contactInput.focus();return;}sendOtpBtn.disabled=true;sendOtpBtn.textContent='Đang gửi...';setTimeout(()=>{otpSent=true;sendOtpBtn.textContent='Đã gửi OTP';alert('Mã OTP đã được gửi đến '+contact+' (Demo)');otpInput.focus();setTimeout(()=>{sendOtpBtn.disabled=false;sendOtpBtn.textContent=translations[document.documentElement.lang]?.loginSendOtp||'Gửi OTP';},30000);},1500);});form.addEventListener('submit',e=>{e.preventDefault();if(!otpSent){alert('Vui lòng gửi mã OTP trước khi đăng nhập');sendOtpBtn.focus();return;}const formData=new FormData(form);console.log('Login attempt with data:',Object.fromEntries(formData));try{localStorage.setItem('lc-role',roleSelect.value);localStorage.setItem('lc-logged-in','1');
+        // Assign persistent user id if not exists
+        if(!localStorage.getItem('lc-user-id')){
+          const base = Date.now().toString(36);
+          const rand = Math.random().toString(36).slice(2,8).toUpperCase();
+          const contact = (contactInput.value||'').replace(/[^a-zA-Z0-9]/g,'').slice(-6).toUpperCase();
+          const uid = `USER-${base}-${rand}${contact?'-'+contact:''}`;
+          localStorage.setItem('lc-user-id', uid);
+        }
+        // Optionally store last login
+        localStorage.setItem('lc-last-login', new Date().toISOString());
+      }catch(err){}
+      alert('Đăng nhập thành công! (Demo)');modal.classList.remove('open');form.reset();otpSent=false;sendOtpBtn.disabled=false;window.location.href=roleSelect.value==='3pl'?'provider-dashboard.html':'customer-dashboard.html';});new MutationObserver(()=>applyPlaceholders()).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});applyPlaceholders();})();
+    (function(){const modal=document.getElementById('roleModal');const openBtn=document.getElementById('registerBtn');const closeBtn=document.getElementById('roleClose');const cancelBtn=document.getElementById('roleCancel');const proceedBtn=document.getElementById('roleProceed');const choice3pl=document.getElementById('role3pl');const choiceCustomer=document.getElementById('roleCustomer');let selected=null;function open(){modal.classList.add('open');proceedBtn.disabled=true;selected=null;choice3pl.classList.remove('active');choiceCustomer.classList.remove('active');}function close(){modal.classList.remove('open');}openBtn.addEventListener('click',e=>{e.preventDefault();open();});closeBtn.addEventListener('click',close);cancelBtn.addEventListener('click',close);modal.addEventListener('click',e=>{if(e.target===modal)close();});function select(role){selected=role;proceedBtn.disabled=false;choice3pl.style.borderColor=role==='3pl'?getComputedStyle(document.documentElement).getPropertyValue('--primary'):'var(--border-color)';choiceCustomer.style.borderColor=role==='customer'?getComputedStyle(document.documentElement).getPropertyValue('--primary'):'var(--border-color)';}choice3pl.addEventListener('click',()=>select('3pl'));choiceCustomer.addEventListener('click',()=>select('customer'));proceedBtn.addEventListener('click',()=>{if(!selected)return;try{localStorage.setItem('lc-role',selected);}catch(e){}const target=selected==='3pl'?'signup-3pl.html':'signup-customer.html';window.location.href=target;});})();
+  </script>
+</body>
+</html>

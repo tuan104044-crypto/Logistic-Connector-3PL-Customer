@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard Khách hàng - Logistic Connector</title>
+  <style>
+    :root{
+      --primary:#0b74da;
+      --primary-hover:#085aa7;
+      --text:#0b2136;
+      --muted:#6b7280;
+      --bg:#f5f8fc;
+      --card:#ffffff;
+      --border:rgba(15,23,42,0.08);
+      --shadow-sm:0 2px 8px rgba(15,23,42,0.04);
+      --shadow-md:0 4px 16px rgba(15,23,42,0.08);
+      --shadow-lg:0 12px 32px rgba(15,23,42,0.12);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+      background:linear-gradient(135deg,#e0f2fe 0%,#f0f9ff 50%,#e0e7ff 100%);
+      color:var(--text);
+      line-height:1.6;
+      min-height:100vh;
+    }
+    header{
+      background:rgba(255,255,255,0.95);
+      backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--border);
+      position:sticky;
+      top:0;
+      z-index:100;
+      box-shadow:var(--shadow-sm);
+    }
+    .wrap{max-width:1200px;margin:0 auto;padding:14px 24px}
+    .row{display:flex;justify-content:space-between;align-items:center}
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      text-decoration:none;
+      color:var(--text);
+      font-weight:800;
+      transition:transform 0.2s ease;
+    }
+    .brand:hover{transform:scale(1.02)}
+    .brand .dot{
+      width:12px;
+      height:12px;
+      border-radius:50%;
+      background:linear-gradient(135deg,var(--primary),#3b82f6);
+      box-shadow:0 2px 8px rgba(11,116,218,0.4);
+      animation:pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse{
+      0%,100%{transform:scale(1)}
+      50%{transform:scale(1.15)}
+    }
+    .actions{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{
+      padding:10px 18px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      background:#fff;
+      cursor:pointer;
+      font-weight:700;
+      font-size:14px;
+      transition:all 0.2s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+    .btn-primary{
+      border-color:var(--primary);
+      background:linear-gradient(135deg,var(--primary),#3b82f6);
+      color:#fff;
+      box-shadow:var(--shadow-md);
+    }
+    .btn-primary:hover{box-shadow:var(--shadow-lg)}
+    .btn-danger{
+      border-color:#ef4444;
+      color:#ef4444;
+      background:#fff;
+    }
+    .btn-danger:hover{background:#fef2f2}
+    main{
+      max-width:1200px;
+      margin:24px auto;
+      padding:0 24px;
+      display:grid;
+      grid-template-columns:280px 1fr;
+      gap:20px;
+    }
+    .sidebar{
+      background:rgba(255,255,255,0.95);
+      backdrop-filter:blur(10px);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:16px;
+      box-shadow:var(--shadow-sm);
+      height:fit-content;
+      position:sticky;
+      top:80px;
+    }
+    .side-title{
+      font-size:12px;
+      color:var(--muted);
+      margin:4px 8px 12px;
+      text-transform:uppercase;
+      letter-spacing:0.5px;
+      font-weight:700;
+    }
+    .nav{display:flex;flex-direction:column;gap:6px}
+    .nav a{
+      padding:10px 14px;
+      border-radius:10px;
+      color:var(--text);
+      text-decoration:none;
+      border:1px solid transparent;
+      font-weight:600;
+      font-size:14px;
+      transition:all 0.2s ease;
+    }
+    .nav a:hover{
+      border-color:var(--primary);
+      background:rgba(11,116,218,0.05);
+      transform:translateX(4px);
+    }
+    .content{display:flex;flex-direction:column;gap:20px}
+    .card{
+      background:rgba(255,255,255,0.95);
+      backdrop-filter:blur(10px);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:24px;
+      box-shadow:var(--shadow-md);
+      transition:all 0.3s ease;
+    }
+    .card:hover{
+      transform:translateY(-2px);
+      box-shadow:var(--shadow-lg);
+    }
+    .card h2{
+      margin:0 0 16px;
+      font-size:20px;
+      font-weight:800;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      gap:16px;
+    }
+    .stat{
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:16px;
+      background:linear-gradient(135deg,#ffffff,#f8fbff);
+      transition:all 0.2s ease;
+    }
+    .stat:hover{
+      transform:translateY(-2px);
+      box-shadow:var(--shadow-sm);
+      border-color:var(--primary);
+    }
+    .stat .num{
+      font-size:32px;
+      font-weight:800;
+      color:var(--primary);
+      margin-top:8px;
+    }
+    .muted{color:var(--muted);font-size:13px;font-weight:600}
+    .req-list{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+      gap:12px;
+    }
+    .req-item{
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:14px;
+      background:linear-gradient(135deg,#ffffff,#fafbff);
+      transition:all 0.2s ease;
+    }
+    .req-item:hover{
+      transform:translateY(-2px);
+      box-shadow:var(--shadow-sm);
+      border-color:var(--primary);
+    }
+    @media(max-width:1024px){
+      main{grid-template-columns:1fr}
+      .sidebar{position:static}
+    }
+    @media(max-width:640px){
+      .actions{width:100%}
+      .btn{flex:1}
+      .grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap row">
+      <a class="brand" href="index.html"><span class="dot"></span><strong>Logistic Connector</strong></a>
+      <div class="actions">
+        <a class="btn" href="account-settings.html">Quản lý tài khoản</a>
+        <button class="btn btn-danger" id="logoutBtn">Đăng xuất</button>
+      </div>
+    </div>
+  </header>
+  <main>
+    <aside class="sidebar">
+      <div class="side-title">Danh mục</div>
+      <nav class="nav">
+        <a href="#overview">Tổng quan</a>
+        <a href="#rfq">Tạo yêu cầu/RFQ</a>
+        <a href="#quotes-received">Báo giá nhận được</a>
+        <a href="#orders">Đơn hàng</a>
+        <a href="#tracking">Theo dõi</a>
+        <a href="#reports">Báo cáo</a>
+        <a href="#invoices">Hóa đơn</a>
+        <a href="#messages">Tin nhắn</a>
+        <a href="#settings">Cài đặt</a>
+      </nav>
+    </aside>
+    <section class="content">
+      <div class="card" id="overview">
+        <h2>Tổng quan</h2>
+        <div class="grid">
+          <div class="stat"><div class="muted">Yêu cầu đã gửi</div><div class="num" id="statReq">0</div></div>
+          <div class="stat"><div class="muted">Báo giá nhận được</div><div class="num" id="statQuote">0</div></div>
+          <div class="stat"><div class="muted">Đơn đang xử lý</div><div class="num" id="statOrders">0</div></div>
+        </div>
+      </div>
+      <div class="card" id="rfq">
+        <h2>Tạo yêu cầu/RFQ</h2>
+        <div class="muted">Tạo yêu cầu báo giá từ các nhà cung cấp 3PL</div>
+        <div style="margin-top:10px">
+          <a class="btn btn-primary" href="create-rfq.html">+ Tạo RFQ mới</a>
+          <a class="btn" href="marketplace.html" style="margin-left:8px">📊 Xem Marketplace</a>
+        </div>
+        <div class="req-list" id="myRFQList" style="margin-top:12px">
+          <!-- My RFQs will be inserted here -->
+        </div>
+      </div>
+      <div class="card" id="quotes-received">
+        <h2>Báo giá nhận được</h2>
+        <div class="muted">Xem và so sánh báo giá từ các nhà cung cấp</div>
+        <div class="req-list" id="quotesReceivedList" style="margin-top:12px">
+          <!-- RFQs with quotes will be inserted here -->
+        </div>
+      </div>
+      <div class="card" id="orders">
+        <h2>Đơn hàng</h2>
+        <div class="muted">Chưa có đơn hàng nào</div>
+      </div>
+      <div class="card" id="tracking">
+        <h2>Theo dõi</h2>
+        <div class="muted">Theo dõi vị trí và trạng thái đơn hàng thời gian thực</div>
+      </div>
+      <div class="card" id="reports">
+        <h2>Báo cáo</h2>
+        <div class="muted">Báo cáo vận chuyển, chi phí, hiệu suất</div>
+      </div>
+      <div class="card" id="invoices">
+        <h2>Hóa đơn</h2>
+        <div class="muted">Quản lý hóa đơn và thanh toán</div>
+      </div>
+      <div class="card" id="messages">
+        <h2>Tin nhắn</h2>
+        <div class="muted">Trao đổi với nhà cung cấp 3PL</div>
+      </div>
+      <div class="card" id="settings">
+        <h2>Cài đặt</h2>
+        <div style="display:flex;gap:14px;align-items:center;margin-bottom:12px">
+          <div style="width:46px;height:46px;border-radius:50%;background:#e5f1ff;display:grid;place-items:center;color:var(--primary);font-weight:800">KH</div>
+          <div>
+            <div><strong id="custName">-</strong></div>
+            <div class="muted" id="custContact">-</div>
+          </div>
+        </div>
+        <a class="btn" href="account-settings.html">Quản lý tài khoản</a>
+      </div>
+    </section>
+  </main>
+  <script>
+    // Guard: must be logged in with customer role
+    try{if(localStorage.getItem('lc-logged-in')!=='1' || localStorage.getItem('lc-role')!=='customer'){location.href='index.html';}}catch(e){}
+    // Load minimal profile
+    const name = localStorage.getItem('lc-name') || '-';
+    const contact = localStorage.getItem('lc-contact') || '-';
+    document.getElementById('custName').textContent = name;
+    document.getElementById('custContact').textContent = contact;
+
+    // Load RFQs and stats
+    try {
+      const myRFQs = JSON.parse(localStorage.getItem('lc-my-rfqs') || '[]');
+      const allQuotes = JSON.parse(localStorage.getItem('lc-quotes') || '[]');
+      const orders = JSON.parse(localStorage.getItem('lc-orders') || '[]');
+
+      document.getElementById('statReq').textContent = myRFQs.length;
+      document.getElementById('statQuote').textContent = allQuotes.length;
+      document.getElementById('statOrders').textContent = orders.filter(o => o.status === 'processing').length;
+
+      // Render my RFQs
+      const myRFQList = document.getElementById('myRFQList');
+      if (myRFQs.length === 0) {
+        myRFQList.innerHTML = '<div class="muted">Chưa có RFQ nào</div>';
+      } else {
+        myRFQList.innerHTML = myRFQs.slice(0, 4).map(r => `
+          <div class="req-item">
+            <div style="font-weight:700;font-size:13px;margin-bottom:4px">${r.title}</div>
+            <div class="muted" style="font-size:12px">${r.origin} → ${r.destination}</div>
+            <div style="margin-top:6px;font-size:11px;color:var(--primary);font-weight:600">
+              ${r.quotesCount || 0} báo giá
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Render RFQs with quotes
+      const quotesReceivedList = document.getElementById('quotesReceivedList');
+      const rfqsWithQuotes = myRFQs.filter(r => (r.quotesCount || 0) > 0);
+      if (rfqsWithQuotes.length === 0) {
+        quotesReceivedList.innerHTML = '<div class="muted">Chưa có báo giá nào</div>';
+      } else {
+        quotesReceivedList.innerHTML = rfqsWithQuotes.slice(0, 4).map(r => `
+          <div class="req-item">
+            <div style="font-weight:700;font-size:13px;margin-bottom:4px">${r.title}</div>
+            <div class="muted" style="font-size:12px">${r.quotesCount} báo giá nhận được</div>
+            <div style="margin-top:6px">
+              <a href="compare-quotes.html?id=${r.id}" class="btn" style="font-size:11px;padding:6px 10px">So sánh & Chọn</a>
+            </div>
+          </div>
+        `).join('');
+      }
+    } catch(e) {
+      console.error('Error loading data:', e);
+    }
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click',()=>{
+      try{localStorage.removeItem('lc-logged-in');}catch(e){}
+      location.href='index.html';
+    });
+  </script>
+</body>
+</html>

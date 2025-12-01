@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>So sánh báo giá</title>
+  <style>
+    :root{--primary:#0b74da;--text:#0b2136;--muted:#6b7280;--bg:#f5f8fc;--card:#ffffff;--border:rgba(15,23,42,0.08);--ok:#10b981;--warn:#f59e0b;--err:#ef4444}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;background:linear-gradient(135deg,#fce7f3 0%,#dbeafe 30%,#e0e7ff 60%,#fef3c7 100%);background-size:400% 400%;animation:gradientShift 15s ease infinite;color:var(--text);min-height:100vh}
+    @keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    header{background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 4px 16px rgba(0,0,0,0.08)}
+    .header-wrap{max-width:1400px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;justify-content:space-between}
+    .logo{font-size:16px;font-weight:700;color:var(--primary);text-decoration:none;display:flex;align-items:center;gap:8px}
+    .logo .dot{width:8px;height:8px;border-radius:50%;background:var(--primary)}
+    .nav{display:flex;gap:16px;align-items:center}
+    .nav a{color:var(--text);text-decoration:none;font-size:13px;font-weight:600;padding:6px 12px;border-radius:6px;transition:all .2s}
+    .nav a:hover{background:var(--bg)}
+    main{max-width:1400px;margin:24px auto;padding:0 20px}
+    .back-link{display:inline-flex;align-items:center;gap:6px;color:var(--primary);text-decoration:none;font-size:13px;font-weight:600;margin-bottom:12px}
+    .back-link:hover{filter:brightness(1.1)}
+    .page-header{margin-bottom:20px}
+    .page-title{font-size:32px;font-weight:900;margin-bottom:8px;background:linear-gradient(135deg,#0b2136,#1e40af);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-0.5px}
+    .page-desc{font-size:14px;color:var(--muted);font-weight:500}
+    .rfq-summary{background:linear-gradient(135deg,rgba(11,116,218,0.08),rgba(59,130,246,0.08));backdrop-filter:blur(10px);border:2px solid rgba(11,116,218,0.2);border-radius:16px;padding:24px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 8px 24px rgba(11,116,218,0.12);transition:all .3s}
+    .rfq-summary:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(11,116,218,0.18)}
+    .rfq-summary-text h3{font-size:20px;font-weight:900;margin-bottom:6px;color:var(--text)}
+    .rfq-summary-text p{font-size:14px;color:var(--muted);font-weight:600}
+    .rfq-summary-count{font-size:48px;font-weight:900;background:linear-gradient(135deg,#0b74da,#3b82f6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .table-card{background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:20px;padding:28px;overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:14px}
+    thead{background:linear-gradient(135deg,rgba(11,116,218,0.1),rgba(59,130,246,0.1));border-bottom:3px solid var(--primary)}
+    thead th{padding:16px 14px;text-align:left;font-weight:800;color:var(--text);font-size:13px;text-transform:uppercase;letter-spacing:0.5px}
+    tbody tr{border-bottom:1px solid var(--border);transition:all .3s}
+    tbody tr:hover{background:linear-gradient(90deg,rgba(11,116,218,0.04),rgba(59,130,246,0.04));transform:scale(1.01)}
+    tbody td{padding:16px 14px}
+    .provider-cell{font-weight:800;color:var(--text);font-size:15px}
+    .provider-cell .rating{display:block;font-size:12px;color:var(--warn);margin-top:4px;font-weight:700}
+    .price-cell{font-weight:900;font-size:17px;background:linear-gradient(135deg,#10b981,#059669);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .best-badge{display:inline-block;background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:4px 10px;border-radius:12px;font-size:10px;font-weight:800;margin-left:8px;box-shadow:0 2px 8px rgba(16,185,129,0.3);text-transform:uppercase;letter-spacing:0.3px}
+    .btn-approve{padding:10px 20px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:13px;transition:transform .2s}
+    .btn-approve:hover{transform:translateY(-2px)}
+    .theme-toggle{background:transparent;border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text);cursor:pointer}
+    .dark .table-card{background:#1f2937;border-color:#374151}
+    .btn-approved{background:linear-gradient(135deg,#6b7280,#4b5563);cursor:not-allowed;opacity:0.7}
+    .empty{text-align:center;padding:40px;color:var(--muted)}
+    .alert{padding:12px;border-radius:6px;margin-bottom:16px;font-size:13px}
+    .alert-success{background:rgba(16,185,129,0.1);color:var(--ok);border-left:3px solid var(--ok)}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-wrap">
+      <a class="logo" href="index.html"><span class="dot"></span>So sánh báo giá</a>
+      <nav class="nav">
+        <a href="customer-dashboard.html">Dashboard</a>
+        <a href="marketplace.html">Marketplace</a>
+        <a href="index.html" id="logoutBtn">Đăng xuất</a>
+        <button class="theme-toggle" id="themeToggle">Chế độ</button>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <a href="customer-dashboard.html" class="back-link">← Quay lại Dashboard</a>
+    
+    <div class="page-header">
+      <h1 class="page-title">So sánh báo giá nhận được</h1>
+      <p class="page-desc">Chọn nhà cung cấp phù hợp nhất dựa trên giá, thời gian, SLA và đánh giá</p>
+    </div>
+
+    <div class="rfq-summary" id="rfqSummary">
+      <!-- RFQ summary will be inserted here -->
+    </div>
+
+    <div class="alert alert-success" id="successAlert" style="display:none">
+      ✅ Đơn hàng đã được tạo thành công! Nhà cung cấp sẽ bắt đầu xử lý yêu cầu của bạn.
+    </div>
+
+    <div class="table-card" id="quotesTable">
+      <!-- Quotes table will be inserted here -->
+    </div>
+  </main>
+  <script>
+    // Theme toggle
+    (function(){
+      const key='lc-theme';
+      function apply(v){ v==='dark'?document.body.classList.add('dark'):document.body.classList.remove('dark'); localStorage.setItem(key,v); }
+      const btn=document.getElementById('themeToggle');
+      btn&&btn.addEventListener('click',()=>{ apply(document.body.classList.contains('dark')?'light':'dark'); });
+      const saved=localStorage.getItem(key); if(saved) apply(saved);
+    })();
+    // Guard: customer only
+    try {
+      const role = localStorage.getItem('lc-role');
+      const loggedIn = localStorage.getItem('lc-logged-in');
+      if (loggedIn !== '1' || role !== 'customer') {
+        alert('Bạn phải đăng nhập với tài khoản khách hàng');
+        window.location.href = 'index.html';
+      }
+    } catch(e) {
+      window.location.href = 'index.html';
+    }
+
+    // Get RFQ ID from URL
+    const params = new URLSearchParams(window.location.search);
+    const rfqId = params.get('id');
+
+    if (!rfqId) {
+      alert('Không tìm thấy RFQ');
+      window.location.href = 'customer-dashboard.html';
+    }
+
+    // Load RFQ and quotes
+    let rfq, quotes;
+    try {
+      const myRFQs = JSON.parse(localStorage.getItem('lc-my-rfqs') || '[]');
+      rfq = myRFQs.find(r => r.id === rfqId);
+      if (!rfq) {
+        // Try marketplace RFQs
+        const marketRFQs = JSON.parse(localStorage.getItem('lc-rfqs') || '[]');
+        rfq = marketRFQs.find(r => r.id === rfqId);
+      }
+      if (!rfq) {
+        alert('RFQ không tồn tại');
+        window.location.href = 'customer-dashboard.html';
+      }
+
+      const allQuotes = JSON.parse(localStorage.getItem('lc-quotes') || '[]');
+      quotes = allQuotes.filter(q => q.rfqId === rfqId);
+    } catch(e) {
+      alert('Lỗi tải dữ liệu');
+      window.location.href = 'customer-dashboard.html';
+    }
+
+    // Render RFQ summary
+    document.getElementById('rfqSummary').innerHTML = `
+      <div class="rfq-summary-text">
+        <h3>${rfq.title}</h3>
+        <p>📍 ${rfq.origin} → ${rfq.destination} • 📅 Cần: ${new Date(rfq.deadline).toLocaleDateString('vi-VN')}</p>
+      </div>
+      <div class="rfq-summary-count">${quotes.length}<br/><span style="font-size:12px;font-weight:600;color:var(--muted)">báo giá</span></div>
+    `;
+
+    // Find best values
+    let bestPrice = quotes.length > 0 ? Math.min(...quotes.map(q => parseFloat(q.price))) : 0;
+    let bestTime = quotes.length > 0 ? Math.min(...quotes.map(q => parseFloat(q.deliveryTime))) : 0;
+    let bestSLA = quotes.length > 0 ? Math.max(...quotes.map(q => parseFloat(q.sla || 0))) : 0;
+
+    // Render quotes table
+    if (quotes.length === 0) {
+      document.getElementById('quotesTable').innerHTML = '<div class="empty">Chưa có báo giá nào cho RFQ này</div>';
+    } else {
+      document.getElementById('quotesTable').innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Nhà cung cấp</th>
+              <th>Giá báo</th>
+              <th>Thời gian giao (ngày)</th>
+              <th>SLA</th>
+              <th>Điều khoản & Ghi chú</th>
+              <th style="text-align:center">Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${quotes.map(q => `
+              <tr>
+                <td class="provider-cell">
+                  ${q.providerName}
+                  <span class="rating">⭐ ${q.rating}/5</span>
+                </td>
+                <td class="price-cell">
+                  ${parseInt(q.price).toLocaleString('vi-VN')} VNĐ
+                  ${parseFloat(q.price) === bestPrice ? '<span class="best-badge">GIÁ TỐT</span>' : ''}
+                </td>
+                <td>
+                  ${q.deliveryTime} ngày
+                  ${parseFloat(q.deliveryTime) === bestTime ? '<span class="best-badge">NHANH</span>' : ''}
+                </td>
+                <td>
+                  ${q.sla}%
+                  ${parseFloat(q.sla) === bestSLA ? '<span class="best-badge">SLA CAO</span>' : ''}
+                </td>
+                <td style="font-size:12px;color:var(--muted)">${q.terms}</td>
+                <td style="text-align:center">
+                  <button class="btn-approve ${q.status === 'approved' ? 'btn-approved' : ''}" 
+                    onclick="approveQuote('${q.id}')" 
+                    ${q.status === 'approved' ? 'disabled' : ''}>
+                    ${q.status === 'approved' ? '✅ Đã duyệt' : 'Duyệt & Tạo đơn'}
+                  </button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function approveQuote(quoteId) {
+      if (!confirm('Bạn có chắc chắn muốn chọn báo giá này và tạo đơn hàng?')) return;
+
+      try {
+        // Update quote status
+        let allQuotes = JSON.parse(localStorage.getItem('lc-quotes') || '[]');
+        const quoteIndex = allQuotes.findIndex(q => q.id === quoteId);
+        if (quoteIndex !== -1) {
+          allQuotes[quoteIndex].status = 'approved';
+          localStorage.setItem('lc-quotes', JSON.stringify(allQuotes));
+        }
+
+        const approvedQuote = allQuotes[quoteIndex];
+
+        // Create order
+        let orders = JSON.parse(localStorage.getItem('lc-orders') || '[]');
+        const order = {
+          id: 'ORD-' + Date.now(),
+          rfqId: rfqId,
+          quoteId: quoteId,
+          title: rfq.title,
+          provider: approvedQuote.providerName,
+          price: approvedQuote.price,
+          deliveryTime: approvedQuote.deliveryTime,
+          status: 'processing',
+          createdDate: new Date().toISOString().split('T')[0]
+        };
+        orders.push(order);
+        localStorage.setItem('lc-orders', JSON.stringify(orders));
+
+        // Update RFQ status
+        let myRFQs = JSON.parse(localStorage.getItem('lc-my-rfqs') || '[]');
+        const rfqIndex = myRFQs.findIndex(r => r.id === rfqId);
+        if (rfqIndex !== -1) {
+          myRFQs[rfqIndex].status = 'approved';
+          localStorage.setItem('lc-my-rfqs', JSON.stringify(myRFQs));
+        }
+
+        // Also update in marketplace RFQs
+        let marketRFQs = JSON.parse(localStorage.getItem('lc-rfqs') || '[]');
+        const marketIndex = marketRFQs.findIndex(r => r.id === rfqId);
+        if (marketIndex !== -1) {
+          marketRFQs[marketIndex].status = 'approved';
+          localStorage.setItem('lc-rfqs', JSON.stringify(marketRFQs));
+        }
+
+        document.getElementById('successAlert').style.display = 'block';
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      } catch(err) {
+        alert('Lỗi khi duyệt báo giá: ' + err.message);
+      }
+    }
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      try { localStorage.removeItem('lc-logged-in'); } catch(err) {}
+      window.location.href = 'index.html';
+    });
+  </script>
+</body>
+</html>
